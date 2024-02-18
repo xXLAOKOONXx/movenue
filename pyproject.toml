@@ -5,7 +5,7 @@ description = ""
 authors = ["xXLAOKOONXx"]
 
 [tool.poetry.dependencies]
-python = "3.11"
+python = ">=3.11,<3.13"
 Pillow = "^9.5.0"
 ffmpeg-python = "^0.2.0"
 ipykernel = "^6.29.2"
