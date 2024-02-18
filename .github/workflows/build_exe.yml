@@ -1,0 +1,22 @@
+name: Build EXE
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build_and_publish_exe:
+    permissions:
+      contents: write
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11' 
+    - run: pip install poetry
+    - run: poetry install
+    - run: poetry run pyinstaller app.spec
+    - run: gh release upload ${{ github.event.release.tag_name }} dist\movenue.exe
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
