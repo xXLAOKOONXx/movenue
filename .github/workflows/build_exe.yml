@@ -16,7 +16,7 @@ jobs:
         python-version: '3.11' 
     - run: pip install poetry
     - run: poetry install
-    - run: poetry run pyinstaller console-app.spec
+    - run: poetry run pyinstaller app.spec
     - run: gh release upload ${{ github.event.release.tag_name }} dist\laoflix.exe
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
