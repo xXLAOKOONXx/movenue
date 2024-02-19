@@ -164,7 +164,7 @@ class MovieCard(BaseCard):
         if self.userscore:
         # expectation: userscore from 0-10
         # 6 being average
-            personal_score_factor = -1 if self.userscore < 6 else 1
+            personal_score_factor = -2 if self.userscore < 6 else 2
             score += 10 * personal_score_factor * math.pow(2, personal_score_factor * (self.userscore - 6))
 
         # public score

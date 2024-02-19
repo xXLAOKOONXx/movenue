@@ -206,14 +206,14 @@ class ShortfilmCard:
         if self.userscore:
         # expectation: userscore from 0-10
         # 6 being average
-            personal_score_factor = -10 if self.userscore < 6 else 10
+            personal_score_factor = -2 if self.userscore < 6 else 2
             score += personal_score_factor * math.pow(2, personal_score_factor * (self.userscore - 6))
 
         # public score
         if self.public_rating:
         # expectation: public rating is between 0 and 1
         # 6 being average
-            personal_score_factor = -3 if self.public_rating * 10 < 6 else 3
+            personal_score_factor = -1 if self.public_rating * 10 < 6 else 1
             score += personal_score_factor * math.pow(2, personal_score_factor * (self.public_rating * 10 - 6))
 
         # multi-watched
