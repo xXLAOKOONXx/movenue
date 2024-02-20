@@ -34,6 +34,19 @@ Optional:
 
 - `<moviename>-poster.jpg` (movie), `poster.jpg` (series), `season<NO>-poster.jpg` (season), `<episode-file-name>.nfo` (episode)
 
+For the **music** section I recommend using [MP3Tag](https://www.mp3tag.de/) to fill 'title' and 'artists'. It is really great for going through multiple files at the same time. But this tool does not offer an easy way to add tags or give the option to add multiple artists. For those cases check out this app itself or the notebooks under `useful_notebooks`.
+
+### Suggestion Algorithm
+
+The app works for movie, shortfilm and series with a scoring system to suggest media. The `algorithm` takes into account:
+
+- recency of last watching
+- personal scoring
+- public scoring (if available)
+- monthly, weekly and daily rng scoring
+
+This might give you the feeling the app wants to force you to consume a specific media, similar to your favorite online platform. If you want to feel free to believe the app is smart enough to figure out how much you like a media content you have never seen and that it recommends it to you quite agressive for that vary reason.
+
 ### Files
 
 The app uses AppData/local/movenue as a location for all files that might be needed, e.g. settings, caches.
@@ -47,6 +60,10 @@ The app only supports windows. Other operating systems are not in my scope.
 ### Disclaimer
 
 Please do not use this application for illegal activities. Pay attention to your local laws and stay safe ;)
+
+### Further Details
+
+You might find more details on functionalities in the [docs folder](./docs/README.md).
 
 ## Development
 

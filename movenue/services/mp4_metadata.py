@@ -10,8 +10,7 @@ def extract_mp4_metadata(file_path):
   Returns:
     dict: A dictionary containing the following keys:
       - 'title' (str): The title of the MP4 file.
-      - 'artist' (str): The artist of the MP4 file.
-      - 'album' (str): The album of the MP4 file.
+      - 'artist' (list[str]): The artist of the MP4 file.
       - 'duration' (float): The duration of the MP4 file in seconds.
       - 'bitrate' (int): The bitrate of the MP4 file in bits per second.
       - 'sample_rate' (int): The sample rate of the MP4 file in Hz.
@@ -26,8 +25,7 @@ def extract_mp4_metadata(file_path):
     >>> extract_mp4_metadata('/path/to/file.mp4')
     {
       'title': 'Song Title',
-      'artist': 'Artist Name',
-      'album': 'Album Name',
+      'artists': 'Artist Name',
       'duration': 240.5,
       'bitrate': 320000,
       'sample_rate': 44100,
@@ -43,9 +41,8 @@ def extract_mp4_metadata(file_path):
     else:
       userrating = None
     metadata = {
-      'title': mp4.get('title', [''])[0],
-      'artist': mp4.get('artist', [''])[0],
-      'album': mp4.get('album', [''])[0],
+      'title': mp4.get('\xa9nam', [''])[0],
+      'artists': mp4.get('\xa9ART', ['']),
       'duration': mp4.info.length,
       'bitrate': mp4.info.bitrate,
       'sample_rate': mp4.info.sample_rate,
@@ -134,22 +131,3 @@ def set_thumbnail(file_path, thumbnail_binary):
     mp4.save()
   except Exception as e:
     raise Exception(f'Error setting thumbnail for MP4 file: {e}')
-  
-def set_title(file_path, title):
-  '''
-  Sets the title for an MP4 file.
-
-  Args:
-    file_path (str): The path to the MP4 file.
-    title (str): The title to be set.
-
-  Raises:
-    Exception: If there is an error setting the title for the MP4 file.
-  '''
-  try:
-    mp4 = MP4(file_path)
-    mp4['title'] = title
-    mp4.save()
-  except Exception as e:
-    raise Exception(f'Error setting title for MP4 file: {e}')
-

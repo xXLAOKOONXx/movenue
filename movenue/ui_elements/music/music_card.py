@@ -39,6 +39,13 @@ class MusicCard(BaseCard):
     
     def get_poster(self, master):
         logger.debug(f'Creating poster for {self.video_name}')
+
+        pretty_name = self.video_name.replace('.mp4', '')
+        if len(pretty_name) > 40:
+            pretty_name = pretty_name[:40] + '...'
+        if self.metadata.get('title') and self.metadata.get('artists'):
+            pretty_name = self.metadata.get('title') + ' (' + ', '.join(self.metadata.get('artists')) + ')'
+
         poster = canvas_helpers.create_image_canvas(
             master=master,
             canvas_width=ui_sizes.SHORTFILM_WIDTH,
@@ -46,7 +53,7 @@ class MusicCard(BaseCard):
             image=self.thumbnail_image,
             image_alt_text=self.video_name,
             on_click_func=lambda ev: self.open_popup(),
-            bottom_text=self.video_name.replace('.mp4', ''),
+            bottom_text=pretty_name,
         )
         logger.debug(f'Created poster for {self.video_name}')
         return poster
@@ -63,10 +70,10 @@ class MusicCard(BaseCard):
     def get_popup_content(self, master):
         content = tk.Frame(master,)# height=(self.screen_height or 1000)-200, width=(self.screen_width or 1000)-200)
 
-        frame1 = tk.Frame(content)
-        frame1.pack()
-        for tag in self.metadata.get('tags', []):
-            ttk.Label(frame1, text=tag).pack()
+        # frame1 = tk.Frame(content)
+        # frame1.pack()
+        # for tag in self.metadata.get('tags', []):
+        #     ttk.Label(frame1, text=tag).pack()
 
         frame2 = tk.Frame(content)
         frame2.pack()

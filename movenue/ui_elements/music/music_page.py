@@ -4,9 +4,11 @@ import os
 from loguru import logger
 from movenue.services.mp4_metadata import extract_mp4_metadata
 from movenue.services.create_xsfp import build_xml_playlist, default_playlist_location
+from movenue.ui_elements.music.music_filter import MusicFilter
 from movenue.ui_elements.page import Page
 from movenue.ui_elements.music.music_card import MusicCard
 from movenue.constants import ui_sizes
+from tkinter import filedialog
 
 class MusicPage(Page):
   def __init__(self, popup_frame: tk.Widget, folder_paths=['//mynas/Daten/Musik/Videos'], screen_width=None, screen_height=None):
@@ -15,7 +17,7 @@ class MusicPage(Page):
     self.folder_paths = folder_paths
     self.music_cards = []
     self.filtered_music_cards = []
-    self.filters = []
+    self.filters:list[MusicFilter] = []
     self.row_width = 5
     if screen_width:
         self.row_width = int((screen_width - 200) / ui_sizes.SHORTFILM_WIDTH)
@@ -32,8 +34,8 @@ class MusicPage(Page):
     self.frame = tk.Frame(master)
 
     # Create the first frame
-    self.frame1 = tk.Frame(self.frame)
-    self.frame1.pack()
+    self.filter_frame = tk.Frame(self.frame)
+    self.filter_frame.pack()
 
     # Create the second frame
     self.frame2 = tk.Frame(self.frame)
@@ -46,6 +48,8 @@ class MusicPage(Page):
     # Create the create xsfp file button
     self.create_xsfp_button = tk.Button(self.frame2, text="Run Playlist", command=self.start_playlist)
     self.create_xsfp_button.pack()
+    self.save_xsfp_button = tk.Button(self.frame2, text="Save Playlist", command=self.save_playlist)
+    self.save_xsfp_button.pack()
 
     self.update_music_cards()
     self.update_available_tags()
@@ -61,6 +65,18 @@ class MusicPage(Page):
     build_xml_playlist(filtered_files)
 
     os.startfile(default_playlist_location())
+
+  def save_playlist(self):
+    target_location = filedialog.asksaveasfilename(defaultextension='.xsfp', filetypes=[('XSPF files', '*.xsfp')])
+    if not target_location:
+      return
+
+    # Get the filtered mp4 files
+    filtered_files = [card.video_path for card in self.filtered_music_cards]
+
+    # Create the xsfp file
+    build_xml_playlist(filtered_files, target_location=target_location)
+     
 
   def update_music_cards(self):
     logger.debug(f'Updating music cards')
@@ -105,38 +121,14 @@ class MusicPage(Page):
       self.available_tags = list(tags)
 
   def build_filter_elements(self):
-      logger.debug(f'Building clickable tags')
-      # Clear the existing widgets in frame1
-      for widget in self.frame1.winfo_children():
-        widget.destroy()
-      tags_frame = tk.Frame(self.frame1)
-      tags_frame.pack(side='top')
-      # Create clickable widgets for each tag
-      for tag in self.available_tags:
-        if tag in self.filters:
-          widget = tk.Button(tags_frame, text=tag, command=lambda t=tag: self.remove_filter(t), foreground='white', background='black')
-          widget.pack(side='left')
-        else:
-          widget = tk.Button(tags_frame, text=tag, command=lambda t=tag: self.add_filter(t))
-          widget.pack(side='left')
-      min_rating_frame = tk.Frame(self.frame1)
-      min_rating_frame.pack(side='top')
-      lbl = tk.Label(min_rating_frame, text='Min User Rating:')
-      lbl.pack(side='left')
-      min_entry = tk.Entry(min_rating_frame, textvariable=self.min_userrating)
-      min_entry.pack(side='left')
-
-      search_frame = tk.Frame(self.frame1)
-      search_frame.pack(side='top')
-      lbl = tk.Label(search_frame, text='Search:')
-      lbl.pack(side='left')
-      search_entry = tk.Entry(search_frame, textvariable=self.search_string)
-      search_entry.pack(side='left')
-
-      refresh_frame = tk.Frame(self.frame1)
-      refresh_frame.pack(side='top')
-      refresh_button = tk.Button(refresh_frame, text='Refresh', command=self.apply_update_and_refresh_cards)
-      refresh_button.pack(side='left')
+    filters_frame = tk.Frame(self.filter_frame)
+    filters_frame.pack()
+    def add_filter():
+      filter = MusicFilter()
+      self.filters.append(filter)
+      filter.get_ui_element(filters_frame, self.available_tags).pack()
+    tk.Button(self.filter_frame, text='Add Filter', command=add_filter).pack()
+    tk.Button(self.filter_frame, text='Apply Filters', command=self.apply_update_and_refresh_cards).pack()
 
   def apply_update_and_refresh_cards(self):
     self.update_filtered_music_cards()
@@ -144,45 +136,19 @@ class MusicPage(Page):
 
   def update_filtered_music_cards(self):
     logger.debug(f'Updating filtered music cards')
-    if not self.filters and not self.min_userrating.get() and not self.search_string.get():
+    if not self.filters:
       self.filtered_music_cards = self.music_cards
     else:
-      self.filtered_music_cards = [card for card in self.music_cards if self.is_filtered(card)]
+      self.filtered_music_cards = [card for card in self.music_cards if any(filter.passes_filter(card) for filter in self.filters)]
 
-  def is_filtered(self, card):
-    return self.is_in_tag_filter(card) and self.is_in_rating_filter(card) and self.is_in_search_filter(card)
 
-  def is_in_tag_filter(self, card:MusicCard):
-    if not self.filters:
-      return True
-    if 'None' in self.filters and not card.metadata.get('tags', []):
-      return True
-    return any(tag in card.metadata.get('tags', []) for tag in self.filters)
-  
-  def is_in_rating_filter(self, card:MusicCard):
-    if not self.min_userrating.get():
-      return True
-    try:
-      return card.metadata.get('userrating',0) >= int(self.min_userrating.get())
-    except:
-      return False
-    
-  def is_in_search_filter(self, card:MusicCard):
-    if not self.search_string.get():
-      return True
-    return self.search_string.get().lower() in card.video_name.lower()
 
-  def remove_filter(self, tag):
-    # Remove the tag from the list of filters
-    self.filters.remove(tag)
-    self.update_filtered_music_cards()
-    self.refresh_cards()
-    self.build_filter_elements()
-
-  def add_filter(self, tag):
-    # Add the tag to the list of filters
-    self.filters.append(tag)
-    self.update_filtered_music_cards()
-    self.refresh_cards()
-    self.build_filter_elements()
-
+# Filtering:
+# n Filtergroups
+# options in filtergroup:
+# - at least one of the following tags []
+# - minimum user rating
+# - search string
+# - minimum duration in s
+# - maximum duration in s
+# - interpret
