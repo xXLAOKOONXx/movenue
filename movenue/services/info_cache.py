@@ -66,6 +66,11 @@ class Cache:
       with open(info_path, 'r') as f:
         json_tree = json.load(f)
       self._shortfilm_info_jsons[info_path] = json_tree
+      try:
+        with open(SHORTFILM_JSON_CACHE, 'w') as f:
+          json.dump(self._shortfilm_info_jsons, f)
+      except Exception as e:
+        logger.warning(f'Error writing shortfilm info json to cache: {e}')
       return json_tree
     
   @property
@@ -109,6 +114,11 @@ class Cache:
       logger.debug(f'Error getting music info json for {info_path}: {e}')
       json_tree = extract_mp4_metadata(info_path)
       self._music_infos[info_path] = json_tree
+      try:
+        with open(MUSIC_JSON_CACHE, 'w') as f:
+          json.dump(self._music_infos, f)
+      except Exception as e:
+        logger.warning(f'Error writing music info json to cache: {e}')
       return json_tree
   
 info_cache = Cache()

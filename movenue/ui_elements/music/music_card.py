@@ -4,7 +4,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 import tkinter as tk
 from movenue.constants import ui_sizes
-from movenue.services.mp4_metadata import add_tag_to_mp4, extract_mp4_thumbnail
+from movenue.services.mp4_metadata import add_tag_to_mp4, extract_mp4_thumbnail, set_userrating
 from movenue.ui_elements.base_card import BaseCard
 from movenue.services import canvas_helpers
 from movenue.ui_elements.popup_window import PopupWindow
@@ -82,6 +82,14 @@ class MusicCard(BaseCard):
                 continue
             ttk.Label(frame2, text=f'{key}: {value}').pack()
 
+        user_rating_row = tk.Frame(content)
+        user_rating_row.pack()
+        ttk.Label(user_rating_row, text='User Rating:').pack(side='left')
+        self.user_rating = tk.StringVar()
+        self.user_rating.set(self.metadata.get('userrating', ''))
+        ttk.Entry(user_rating_row, textvariable=self.user_rating).pack(side='left')
+        tk.Button(user_rating_row, text='Save', command=lambda: self.save_rating()).pack(side='left')
+
         frame3 = tk.Frame(content)
         frame3.pack()
         self.tag_var = tk.StringVar()
@@ -94,6 +102,10 @@ class MusicCard(BaseCard):
         tk.Button(frame4, text='Play', command=lambda: self.play_file()).pack()
 
         return content
+    
+    def save_rating(self):
+        set_userrating(self.video_path, int(self.user_rating.get()))
+        self.metadata = info_cache.get_music_info_json(self.video_path, refresh=True)
     
     def add_tag(self):
         tag = self.tag_var.get()
