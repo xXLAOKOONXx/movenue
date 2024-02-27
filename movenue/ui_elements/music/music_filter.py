@@ -103,7 +103,7 @@ class MusicFilter:
     def is_in_interpret_filter(self, card:MusicCard):
       if not self.interpret.get():
         return True
-      return self.interpret.get().lower() in card.metadata.get('artists',['']).lower()
+      return any(self.interpret.get().lower() in a.lower() for a in card.metadata.get('artists',['']))
     
     def passes_filter(self, card: MusicCard):
       return self.is_in_tag_filter(card) and self.is_in_rating_filter(card) and self.is_in_search_filter(card) and self.is_in_interpret_filter(card) and self.is_in_duration_filter(card)
