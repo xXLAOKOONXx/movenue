@@ -23,4 +23,7 @@ class Icons:
             self._eye_icons[size] = ImageTk.PhotoImage(Image.open(resource_path('movenue/assets/icons8-sichtbar-50.png')).resize((size, size)))
         return self._eye_icons[size]
     
+def get_app_icon_path():
+    return resource_path('movenue/assets/polygon.ico')
+    
 icons = Icons()

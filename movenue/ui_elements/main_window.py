@@ -12,6 +12,7 @@ from movenue.ui_elements.page import Page
 from movenue.ui_elements.search_page import SearchPage
 from movenue.constants import ui_colors
 from movenue.services.settings import settings
+from movenue.services.icons import get_app_icon_path
 
 def perform_search(search_text, display_var: tk.StringVar):
     display_var.set(search_text.get())
@@ -37,6 +38,7 @@ class MainWindow:
     def __init__(self, movie_folders=settings.movie_folders, shortfilm_folders = settings.shortfilm_folders, series_base_folders = settings.series_base_folders, music_folders = settings.music_folders):
         self.pages = []
         self.window = tk.Tk()
+        self.window.iconbitmap(get_app_icon_path())
         self.window.configure(background=ui_colors.DEFAULT_BACKGROUND)
         self.window.attributes('-fullscreen', True)
         screen_width = self.window.winfo_screenwidth()
