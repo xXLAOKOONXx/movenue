@@ -40,6 +40,14 @@ def extract_mp4_metadata(file_path):
       userrating = int(userrating.decode('utf-8'))
     else:
       userrating = None
+    if music_start := mp4.get('----:LAO:music-start', [None])[0]:
+      music_start = int(music_start.decode('utf-8'))
+    else:
+      music_start = None
+    if music_end := mp4.get('----:LAO:music-end', [None])[0]:
+      music_end = int(music_end.decode('utf-8'))
+    else:
+      music_end = None
     metadata = {
       'title': mp4.get('\xa9nam', [''])[0],
       'artists': mp4.get('\xa9ART', ['']),
@@ -50,6 +58,8 @@ def extract_mp4_metadata(file_path):
       'tags': mp4.get('tags', []),
       # 'thumbnail': mp4.get('covr', []),  # Assuming thumbnail is stored in 'covr' tag
       'userrating': userrating,
+      'music_start': music_start,
+      'music_end': music_end,
     }
     return metadata
   except Exception as e:
@@ -131,3 +141,20 @@ def set_thumbnail(file_path, thumbnail_binary):
     mp4.save()
   except Exception as e:
     raise Exception(f'Error setting thumbnail for MP4 file: {e}')
+  
+# TODO: Add music-start andd music-end
+def set_music_start(file_path, start_in_s):
+  try:
+    mp4 = MP4(file_path)
+    mp4['----:LAO:music-start'] = bytes(str(start_in_s), 'utf-8')
+    mp4.save()
+  except Exception as e:
+    raise Exception(f'Error setting music start for MP4 file: {e}')
+
+def set_music_end(file_path, end_in_s):
+  try:
+    mp4 = MP4(file_path)
+    mp4['----:LAO:music-end'] = bytes(str(end_in_s), 'utf-8')
+    mp4.save()
+  except Exception as e:
+    raise Exception(f'Error setting music end for MP4 file: {e}')

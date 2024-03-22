@@ -33,10 +33,14 @@ def add_error_tag(canvas:tk.Canvas, canvas_width:int, validation:bool=True, size
     canvas.create_polygon(canvas_width - size,0,canvas_width,size,canvas_width,0,fill='red')
 
 def add_bottom_text(canvas:tk.Canvas, canvas_width:int, canvas_height:int, text:str):
+    TEXT_THRESHOLD = 50
     if not text:
         return
     canvas.create_rectangle(10, canvas_height - 25, canvas_width - 10, canvas_height - 5, fill='white')
-    canvas.create_text(canvas_width/2, canvas_height - 15, text=text, fill='black')
+    if len(text) > TEXT_THRESHOLD:
+        canvas.create_text(12, canvas_height - 15, text=text, fill='black', justify='left', anchor='w')
+    else:
+        canvas.create_text(canvas_width/2, canvas_height - 15, text=text, fill='black')
 
 def add_on_click(canvas:tk.Canvas, func:Callable[[tk.Event], object] | None):
     if func is None:

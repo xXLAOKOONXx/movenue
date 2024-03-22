@@ -3,7 +3,7 @@ import os
 
 from loguru import logger
 from movenue.services.mp4_metadata import extract_mp4_metadata
-from movenue.services.create_xsfp import build_xml_playlist, default_playlist_location
+from movenue.services.create_xspf import build_xml_playlist, default_playlist_location, PlaylistItem
 from movenue.ui_elements.music.music_filter import MusicFilter
 from movenue.ui_elements.page import Page
 from movenue.ui_elements.music.music_card import MusicCard
@@ -59,7 +59,7 @@ class MusicPage(Page):
 
   def start_playlist(self):
     # Get the filtered mp4 files
-    filtered_files = [card.video_path for card in self.filtered_music_cards]
+    filtered_files = [PlaylistItem(card.video_path, music_start=card.music_start, music_end=card.music_end) for card in self.filtered_music_cards]
 
     # Create the xsfp file
     build_xml_playlist(filtered_files)
@@ -67,12 +67,12 @@ class MusicPage(Page):
     os.startfile(default_playlist_location())
 
   def save_playlist(self):
-    target_location = filedialog.asksaveasfilename(defaultextension='.xsfp', filetypes=[('XSPF files', '*.xsfp')])
+    target_location = filedialog.asksaveasfilename(defaultextension='.xspf', filetypes=[('XSPF files', '*.xspf')])
     if not target_location:
       return
 
     # Get the filtered mp4 files
-    filtered_files = [card.video_path for card in self.filtered_music_cards]
+    filtered_files = [PlaylistItem(card.video_path, music_start=card.music_start, music_end=card.music_end) for card in self.filtered_music_cards]
 
     # Create the xsfp file
     build_xml_playlist(filtered_files, target_location=target_location)

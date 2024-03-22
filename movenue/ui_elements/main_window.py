@@ -38,6 +38,7 @@ class MainWindow:
     def __init__(self, movie_folders=settings.movie_folders, shortfilm_folders = settings.shortfilm_folders, series_base_folders = settings.series_base_folders, music_folders = settings.music_folders):
         self.pages = []
         self.window = tk.Tk()
+        self.window.winfo_screen
         self.window.iconbitmap(get_app_icon_path())
         self.window.configure(background=ui_colors.DEFAULT_BACKGROUND)
         self.window.attributes('-fullscreen', True)

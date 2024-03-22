@@ -4,7 +4,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 import tkinter as tk
 from movenue.constants import ui_sizes
-from movenue.services.mp4_metadata import add_tag_to_mp4, extract_mp4_thumbnail, set_userrating
+from movenue.services.mp4_metadata import add_tag_to_mp4, extract_mp4_thumbnail, set_userrating, set_music_start, set_music_end
 from movenue.ui_elements.base_card import BaseCard
 from movenue.services import canvas_helpers
 from movenue.ui_elements.popup_window import PopupWindow
@@ -12,6 +12,8 @@ import moviepy.editor as mp
 from loguru import logger
 from movenue.services.info_cache import info_cache
 from movenue.services.image_cache import image_cache
+
+# TODO: Add music-start andd music-end
 
 class MusicCard(BaseCard):
     THUMBNAIL_WIDTH = ui_sizes.SHORTFILM_WIDTH
@@ -90,6 +92,22 @@ class MusicCard(BaseCard):
         ttk.Entry(user_rating_row, textvariable=self.user_rating).pack(side='left')
         tk.Button(user_rating_row, text='Save', command=lambda: self.save_rating()).pack(side='left')
 
+        music_start_row = tk.Frame(content)
+        music_start_row.pack()
+        ttk.Label(music_start_row, text='Music Start (ms):').pack(side='left')
+        self.music_start_var = tk.StringVar()
+        self.music_start_var.set(self.metadata.get('music_start', ''))
+        ttk.Entry(music_start_row, textvariable=self.music_start_var).pack(side='left')
+        tk.Button(music_start_row, text='Save', command=lambda: self.save_music_start()).pack(side='left')
+
+        music_end_row = tk.Frame(content)
+        music_end_row.pack()
+        ttk.Label(music_end_row, text='Music End (ms):').pack(side='left')
+        self.music_end_var = tk.StringVar()
+        self.music_end_var.set(self.metadata.get('music_end', ''))
+        ttk.Entry(music_end_row, textvariable=self.music_end_var).pack(side='left')
+        tk.Button(music_end_row, text='Save', command=lambda: self.save_music_end()).pack(side='left')
+
         frame3 = tk.Frame(content)
         frame3.pack()
         self.tag_var = tk.StringVar()
@@ -106,6 +124,22 @@ class MusicCard(BaseCard):
     def save_rating(self):
         set_userrating(self.video_path, int(self.user_rating.get()))
         self.metadata = info_cache.get_music_info_json(self.video_path, refresh=True)
+    
+    def save_music_start(self):
+        set_music_start(self.video_path, int(self.music_start_var.get()))
+        self.metadata = info_cache.get_music_info_json(self.video_path, refresh=True)
+    
+    def save_music_end(self):
+        set_music_end(self.video_path, int(self.music_end_var.get()))
+        self.metadata = info_cache.get_music_info_json(self.video_path, refresh=True)
+
+    @property
+    def music_start(self):
+        return self.metadata.get('music_start')
+    
+    @property
+    def music_end(self):
+        return self.metadata.get('music_end')
     
     def add_tag(self):
         tag = self.tag_var.get()
