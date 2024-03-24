@@ -36,7 +36,7 @@ class Settings:
           value (str): The setting value.
         '''
         self.settings[key] = value
-        with open(SETTINGS_FILE, '+w') as f:
+        with open(self.file_path, '+w') as f:
             json.dump(self.settings, f, indent=2)
 
     @property

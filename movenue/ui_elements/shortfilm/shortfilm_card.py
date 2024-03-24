@@ -18,7 +18,6 @@ from movenue.constants import ui_sizes
 class ShortfilmCard:
     def __init__(self, folder_path, movie_name:str, popup_master:tk.Widget):
         logger.debug(f'Creating ShortfilmCard for {movie_name}')
-        # TODO Add optional cached data
         self.popup_master = popup_master
         self.folder_path = folder_path
         self.poster_url = os.path.join(folder_path, f'{movie_name}.jpg')
@@ -89,7 +88,6 @@ class ShortfilmCard:
 
     def interpret_nfo(self):
         logger.debug(f'Interpreting nfo for {self.movie_name}')
-        # TODO Add optional cached data
         logger.debug(f'Getting info for {self.movie_name}')
         json_tree = info_cache.get_shortfilm_info_json(self.info_json_path)
         logger.debug(f'Got info for {self.movie_name}')

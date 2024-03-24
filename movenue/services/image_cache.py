@@ -4,7 +4,7 @@ import os
 
 from loguru import logger
 import numpy as np
-from movenue.services.mp4_metadata import extract_mp4_thumbnail
+from movenue.services.metadata import extract_thumbnail
 from movenue.services.settings import settings
 from PIL import Image, ImageTk
 import moviepy.editor as mp
@@ -64,8 +64,10 @@ class Cache:
 
   def refresh_music_image(self, video_path):
     try:
-      binary = extract_mp4_thumbnail(video_path)
-      image_data = io.BytesIO(binary[0])
+      binary = extract_thumbnail(video_path)
+      if isinstance(binary, list):
+        binary = binary[0]
+      image_data = io.BytesIO(binary)
       image = Image.open(image_data)
       self._music_images[video_path] = image.resize((ui_sizes.MUSIC_WIDTH, ui_sizes.MUSIC_HEIGHT))
     except Exception as e:

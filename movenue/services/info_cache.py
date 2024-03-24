@@ -2,7 +2,7 @@ import json
 import os
 
 from loguru import logger
-from movenue.services.mp4_metadata import extract_mp4_metadata
+from movenue.services.metadata import extract_metadata
 from movenue.services.settings import settings
 
 CACHE_FOLDER = os.path.join(os.environ['LOCALAPPDATA'], 'movenue', 'cache')
@@ -95,9 +95,9 @@ class Cache:
     for folder_path in self.music_folders:
       for root, dirs, files in os.walk(folder_path):
         for file in files:
-          if file.endswith('.mp4'):
+          if file.endswith('.mp4') or file.endswith('.mp3'):
             try:
-              self._music_infos[os.path.join(root, file).replace('/', '\\')] = extract_mp4_metadata(os.path.join(root, file))
+              self._music_infos[os.path.join(root, file).replace('/', '\\')] = extract_metadata(os.path.join(root, file))
             except Exception as e:
               logger.warning(f'Error extracting MP4 metadata: {e}')
     with open(MUSIC_JSON_CACHE, 'w') as f:
@@ -105,14 +105,14 @@ class Cache:
   
   def get_music_info_json(self, info_path, refresh=False):
     if not settings.get('cache_enabled'):
-      return extract_mp4_metadata(info_path)
+      return extract_metadata(info_path)
     try:
       if refresh:
         raise Exception('Forced refresh')
       return self.music_infos[info_path.replace('/', '\\')]
     except Exception as e:
       logger.debug(f'Error getting music info json for {info_path}: {e}')
-      json_tree = extract_mp4_metadata(info_path)
+      json_tree = extract_metadata(info_path)
       self._music_infos[info_path] = json_tree
       try:
         with open(MUSIC_JSON_CACHE, 'w') as f:

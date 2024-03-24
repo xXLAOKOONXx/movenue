@@ -141,8 +141,7 @@ def set_thumbnail(file_path, thumbnail_binary):
     mp4.save()
   except Exception as e:
     raise Exception(f'Error setting thumbnail for MP4 file: {e}')
-  
-# TODO: Add music-start andd music-end
+
 def set_music_start(file_path, start_in_s):
   try:
     mp4 = MP4(file_path)

@@ -1,6 +1,7 @@
 from tkinter import ttk
 import tkinter as tk
 from movenue.ui_elements.music.music_card import MusicCard
+import os
 
 # Filtering:
 # n Filtergroups
@@ -21,6 +22,7 @@ class MusicFilter:
         self.max_duration = tk.StringVar()
         self.search_string = tk.StringVar()
         self.interpret = tk.StringVar()
+        self.file_extension = tk.StringVar()
     
     def get_ui_element(self, master: tk.Widget, available_tags: list[str]):
         available_tags = available_tags + ['']
@@ -64,6 +66,13 @@ class MusicFilter:
         tk.Label(search_frame, text='Search:').pack(side=tk.LEFT)
         tk.Entry(search_frame, textvariable=self.search_string).pack(side=tk.LEFT)
 
+        # FILE EXTENSION
+        extension_frame = tk.Frame(self.frame)
+        extension_frame.pack()
+        tk.Label(extension_frame, text='File Extension:').pack(side=tk.LEFT)
+        tk.Entry(extension_frame, textvariable=self.file_extension).pack(side=tk.LEFT)
+
+
         return self.frame
 
     def is_in_tag_filter(self, card:MusicCard):
@@ -105,5 +114,12 @@ class MusicFilter:
         return True
       return any(self.interpret.get().lower() in a.lower() for a in card.metadata.get('artists',['']))
     
+    def is_in_file_extension_filter(self, card:MusicCard):
+      if not self.file_extension.get():
+        return True
+      
+      _filename, file_extension = os.path.splitext(card.video_path)
+      return self.file_extension.get().strip('.') == file_extension.strip('.')
+    
     def passes_filter(self, card: MusicCard):
-      return self.is_in_tag_filter(card) and self.is_in_rating_filter(card) and self.is_in_search_filter(card) and self.is_in_interpret_filter(card) and self.is_in_duration_filter(card)
+      return self.is_in_tag_filter(card) and self.is_in_rating_filter(card) and self.is_in_search_filter(card) and self.is_in_interpret_filter(card) and self.is_in_duration_filter(card) and self.is_in_file_extension_filter(card)

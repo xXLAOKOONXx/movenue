@@ -25,19 +25,17 @@ def default_playlist_location():
   tmp_folder = tempfile.gettempdir()
   return os.path.join(tmp_folder, "playlist.xspf")
 
-# TODO: Encorporate music-start and music-end
-# Implemented it looks like this example: https://wiki.videolan.org/XSPF/#Example_of_XSPF_with_VLC_extensions
 def build_xml_playlist(items:list[PlaylistItem], target_location=None):
   """
   Build an XML playlist file.
 
   Args:
-    files (list): List of file names.
+    files (list): List of PlaylistItems.
     target_location (str, optional): Target location to save the XML playlist file.
       If not provided, a file in the tmp folder assigned to the application will be used.
 
   Example usage:
-    files = ["song1.mp3", "song2.mp3", "song3.mp3"]
+    files = [PlaylistItem("song1.mp3"), PlaylistItem("song2.mp3"), PlaylistItem("song3.mp3")]
     target_location = "playlist.xspf"
     build_xml_playlist(files, target_location)
   """
@@ -55,6 +53,7 @@ def build_xml_playlist(items:list[PlaylistItem], target_location=None):
     location = ET.SubElement(track, "location")
     location.text = str(item.file_path)
     if item.music_start or item.music_end:
+      # Implemented based on: https://wiki.videolan.org/XSPF/#Example_of_XSPF_with_VLC_extensions 
       extension = ET.SubElement(track, 'extension', application='http://www.videolan.org/vlc/playlist/0')
       if item.music_start:
         start_el = ET.SubElement(extension, 'vlc:option')

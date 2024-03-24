@@ -11,7 +11,7 @@ from movenue.constants import ui_sizes
 from tkinter import filedialog
 
 class MusicPage(Page):
-  def __init__(self, popup_frame: tk.Widget, folder_paths=['//mynas/Daten/Musik/Videos'], screen_width=None, screen_height=None):
+  def __init__(self, popup_frame: tk.Widget, folder_paths=[], screen_width=None, screen_height=None):
     super().__init__()
     self.popup_frame = popup_frame
     self.folder_paths = folder_paths
@@ -84,7 +84,7 @@ class MusicPage(Page):
     for folder_path in self.folder_paths:
       for root, dirs, files in os.walk(folder_path):
         for file in files:
-          if file.endswith('.mp4'):
+          if file.endswith('.mp4') or file.endswith('.mp3'):
             self.music_cards.append(MusicCard(os.path.join(root, file), self.popup_frame, screen_height=self.screen_height, screen_width=self.screen_width))
 
   def refresh_cards(self):

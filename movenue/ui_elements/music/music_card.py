@@ -4,7 +4,7 @@ from PIL import Image, ImageTk
 from tkinter import ttk
 import tkinter as tk
 from movenue.constants import ui_sizes
-from movenue.services.mp4_metadata import add_tag_to_mp4, extract_mp4_thumbnail, set_userrating, set_music_start, set_music_end
+from movenue.services.metadata import add_tag, set_userrating, set_music_start, set_music_end
 from movenue.ui_elements.base_card import BaseCard
 from movenue.services import canvas_helpers
 from movenue.ui_elements.popup_window import PopupWindow
@@ -12,8 +12,6 @@ import moviepy.editor as mp
 from loguru import logger
 from movenue.services.info_cache import info_cache
 from movenue.services.image_cache import image_cache
-
-# TODO: Add music-start andd music-end
 
 class MusicCard(BaseCard):
     THUMBNAIL_WIDTH = ui_sizes.SHORTFILM_WIDTH
@@ -144,7 +142,7 @@ class MusicCard(BaseCard):
     def add_tag(self):
         tag = self.tag_var.get()
         if tag:
-            add_tag_to_mp4(self.video_path, tag)
+            add_tag(self.video_path, tag)
             self.metadata = info_cache.get_music_info_json(self.video_path, refresh=True)
             self.tag_var.set('')
 
