@@ -3,7 +3,7 @@ import os
 
 from loguru import logger
 from movenue.services.mp4_metadata import extract_mp4_metadata
-from movenue.services.create_xspf import build_xml_playlist, default_playlist_location, PlaylistItem
+from movenue.services.create_xspf import build_xml_playlist, default_playlist_location, PlaylistItem, weight_playlist_items
 from movenue.ui_elements.music.music_filter import MusicFilter
 from movenue.ui_elements.page import Page
 from movenue.ui_elements.music.music_card import MusicCard
@@ -28,6 +28,7 @@ class MusicPage(Page):
     self.screen_height = screen_height
     self.min_userrating = tk.StringVar()
     self.search_string = tk.StringVar()
+    self.weight_playlist_active = tk.IntVar()
 
   def set_master(self, master: tk.Widget):
     super().set_master(master)
@@ -46,6 +47,8 @@ class MusicPage(Page):
     self.cards_frame.pack()
 
     # Create the create xsfp file button
+    self.weight_playlist_toggle = tk.Checkbutton(self.frame2, text="Apply weighting", variable=self.weight_playlist_active)
+    self.weight_playlist_toggle.pack()
     self.create_xsfp_button = tk.Button(self.frame2, text="Run Playlist", command=self.start_playlist)
     self.create_xsfp_button.pack()
     self.save_xsfp_button = tk.Button(self.frame2, text="Save Playlist", command=self.save_playlist)
@@ -59,7 +62,10 @@ class MusicPage(Page):
 
   def start_playlist(self):
     # Get the filtered mp4 files
-    filtered_files = [PlaylistItem(card.video_path, music_start=card.music_start, music_end=card.music_end) for card in self.filtered_music_cards]
+    filtered_files = [PlaylistItem(card.video_path, music_start=card.music_start, music_end=card.music_end, score=card.metadata.get('userrating')) for card in self.filtered_music_cards]
+
+    if self.weight_playlist_active:
+      filtered_files = weight_playlist_items(filtered_files)
 
     # Create the xsfp file
     build_xml_playlist(filtered_files)
@@ -72,7 +78,10 @@ class MusicPage(Page):
       return
 
     # Get the filtered mp4 files
-    filtered_files = [PlaylistItem(card.video_path, music_start=card.music_start, music_end=card.music_end) for card in self.filtered_music_cards]
+    filtered_files = [PlaylistItem(card.video_path, music_start=card.music_start, music_end=card.music_end, score=card.metadata.get('userrating')) for card in self.filtered_music_cards]
+
+    if self.weight_playlist_active:
+      filtered_files = weight_playlist_items(filtered_files)
 
     # Create the xsfp file
     build_xml_playlist(filtered_files, target_location=target_location)

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import os
 from pathlib import Path
 import tempfile
+from typing import Callable
 import xml.etree.ElementTree as ET
 
 @dataclass
@@ -12,6 +13,8 @@ class PlaylistItem:
   '''Start in milliseconds, defaults to None (no cropping)'''
   music_end: int | None = None
   '''End of music in milliseconds, defaults to None (no cropping)'''
+  score: int | float | None = None
+  '''score for this item ranging from 1 to 10'''
 
 
 def default_playlist_location():
@@ -67,3 +70,32 @@ def build_xml_playlist(items:list[PlaylistItem], target_location=None):
 
   # Write the XML tree to the target location
   tree.write(target_location, encoding="utf-8", xml_declaration=True)
+
+def linear_weighting(score: int | float | None) -> int:
+  if not score:
+    return 1
+  return int(score)
+
+def exponential_weighting(score: int | float | None) -> int:
+  '''
+  example implementation for exponential weighting.
+  I disadvise using it as the playlist gets too fast too big.
+  '''
+  if score is None:
+    return 1
+  return int(2**score)
+
+def weight_playlist_items(items:list[PlaylistItem], weighting_function:Callable[[int|float|None], int] = linear_weighting) -> list[PlaylistItem]:
+  '''
+  function to build a new list of PlaylistItems weighted based on the score and weighting_function.
+  Args:
+  - items: Items to use in the new list
+  - weighting_function: Function to determine the occurance amount of each item, be careful with this as too big playlists might lead to faulty behavior of the player
+  Returns:
+  - weighted_playlist_items list[PlaylistItem]
+  '''
+  new_list = []
+  for item in items:
+    for _ in range(0, weighting_function(item.score)):
+      new_list.append(item)
+  return new_list
