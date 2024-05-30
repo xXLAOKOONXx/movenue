@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['movenue\\ui\\app.py'],
+    ['movenue\\app.py'],
     pathex=[],
     binaries=[],
     datas=[('movenue\\ui\\assets\\icons8-sichtbar-50.png', 'movenue\\ui\\assets'),
