@@ -11,7 +11,7 @@ moviepy = "^1.0.3"
 loguru = "^0.7.2"
 
 [tool.poetry.dev-dependencies]
-pyinstaller = "^6.7.0"
+pyinstaller = "^5.9.0"
 ipykernel = "^6.29.2"
 exceptiongroup = "^1.2.0"
 
