@@ -10,7 +10,7 @@ a = Analysis(
     binaries=[],
     datas=[('movenue\\ui\\assets\\icons8-sichtbar-50.png', 'movenue\\ui\\assets'),
         ('movenue\\ui\\assets\\polygon.ico', 'movenue\\ui\\assets')],
-    hiddenimports=[],
+    hiddenimports=["movenue"],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
