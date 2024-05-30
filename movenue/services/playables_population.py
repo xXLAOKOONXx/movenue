@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 from loguru import logger
 from PIL import Image, ImageTk
 from mutagen.mp4 import MP4
-from constants import nfo_fields, mp4_fields, id3_fields
+from movenue.constants import nfo_fields, mp4_fields, id3_fields
 from mutagen.id3 import ID3, TextFrame
 
 
