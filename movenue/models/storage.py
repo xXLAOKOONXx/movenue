@@ -109,5 +109,10 @@ class Storage:
             folder_storage.collections.append(collection)
           except:
             pass
-    with open(os.path.join(CACHE_FOLDER, get_folder_storage_key(folder_storage.folder_path, folder_storage.search_type, folder_storage.include_subfolders)), 'w') as file:
-      json.dump(folder_storage.__to_json__(), file)
+    Storage.save_folder_storage(folder_storage)
+
+
+  @staticmethod
+  def save_folder_storage(folder_storage: FolderStorage):
+      with open(os.path.join(CACHE_FOLDER, get_folder_storage_key(folder_storage.folder_path, folder_storage.search_type, folder_storage.include_subfolders)), 'w') as file:
+        json.dump(folder_storage.__to_json__(), file)

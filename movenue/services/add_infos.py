@@ -17,7 +17,7 @@ def save_playable_to_file(playable: Playable, filestore:FolderStorage|None=None)
     try:
       save_playable_to_nfo(playable, nfo_path)
       if filestore:
-        Storage.refresh_folder_store(filestore)
+        Storage.save_folder_storage(filestore)
       return
     except Exception as e:
       logger.error(f"Error saving infos to {nfo_path}: {e}")
@@ -25,7 +25,7 @@ def save_playable_to_file(playable: Playable, filestore:FolderStorage|None=None)
     try:
       save_playable_to_mp4(playable)
       if filestore:
-        Storage.refresh_folder_store(filestore)
+        Storage.save_folder_storage(filestore)
       return
     except Exception as e:
       logger.error(f"Error saving infos to {playable.file_path}: {e}")
@@ -33,7 +33,7 @@ def save_playable_to_file(playable: Playable, filestore:FolderStorage|None=None)
     try:
       save_playable_to_id3(playable)
       if filestore:
-        Storage.refresh_folder_store(filestore)
+        Storage.save_folder_storage(filestore)
       return
     except Exception as e:
       logger.error(f"Error saving infos to {playable.file_path}: {e}")
