@@ -8,8 +8,8 @@ a = Analysis(
     ['movenue\\app.py'],
     pathex=[],
     binaries=[],
-    datas=[('movenue\\ui\\assets\\icons8-sichtbar-50.png', 'movenue\\ui\\assets'),
-        ('movenue\\ui\\assets\\polygon.ico', 'movenue\\ui\\assets')],
+    datas=[('movenue\\assets\\icons8-sichtbar-50.png', 'movenue\\assets'),
+        ('movenue\\assets\\polygon.ico', 'movenue\\assets')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -42,5 +42,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='movenue\\ui\\assets\\polygon.ico'
+    icon='movenue\\assets\\polygon.ico'
 )

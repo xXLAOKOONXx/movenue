@@ -20,10 +20,10 @@ class Icons:
         if not hasattr(self, '_eye_icons'):
             self._eye_icons = {}
         if size not in self._eye_icons.keys():
-            self._eye_icons[size] = ImageTk.PhotoImage(Image.open(resource_path('movenue/ui/assets/icons8-sichtbar-50.png')).resize((size, size)))
+            self._eye_icons[size] = ImageTk.PhotoImage(Image.open(resource_path('movenue/assets/icons8-sichtbar-50.png')).resize((size, size)))
         return self._eye_icons[size]
     
 def get_app_icon_path():
-    return resource_path('movenue/ui/assets/polygon.ico')
+    return resource_path('movenue/assets/polygon.ico')
     
 icons = Icons()
