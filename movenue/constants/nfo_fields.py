@@ -1,0 +1,7 @@
+START_TIME_IN_MS = 'start_time_in_ms'
+PLAYCOUNT = 'playcount'
+USERRATING = 'userscore'
+LASTPLAYED = 'lastplayed'
+TITLE = 'title'
+END_TIME_IN_MS = 'end_time_in_ms'
+TAG = 'Genre'
