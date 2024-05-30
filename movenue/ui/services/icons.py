@@ -27,9 +27,9 @@ class Icons:
         return self._eye_icons[size]
     
 def get_app_icon_path():
-    try:
+    if os.path.exists(resource_path('movenue/assets/polygon.ico')):
         return resource_path('movenue/assets/polygon.ico')
-    except:
+    else:
         return resource_path('assets/polygon.ico')
     
 icons = Icons()
