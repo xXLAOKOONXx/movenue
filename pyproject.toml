@@ -9,6 +9,7 @@ python = ">=3.11,<3.13"
 mutagen = "^1.47.0"
 moviepy = "^1.0.3"
 loguru = "^0.7.2"
+setuptools = "^69.5.1"
 
 [tool.poetry.dev-dependencies]
 pyinstaller = "^5.9.0"
