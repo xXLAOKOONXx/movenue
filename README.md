@@ -16,29 +16,32 @@ The main selling point for MOVENUE over your ordinary media center options: Watc
 
 You can place the exe from the latest release wherever you like and start by executing the file.
 
-On the first start you may not find anything within the app. You need to configure folders for the respective sections. For that select the settings in top right corner of the app. After adding a folder you need to restart the app.
+On the first start you may not find anything within the app. You need to configure folders for the respective sections. For that select the settings in top right corner of the app. After adding settings you need to restart the app.
 
-The app uses metadata files for movies, series and shortfilm tab. For movies and series `nfo` files are required. For shortfilms `info.json` files are required.
+The app supports separate metadata in `nfo` or `info.json` files or metadata in mp4 files or id3 tags in mp3 files.
+
+I recommend using `nfo` for collections (series).
 
 ### Create required Metadata
 
-shortfilm metadata is expected as created by youtube-dl when using `--write-info-json` [link](https://github.com/ytdl-org/youtube-dl?tab=readme-ov-file#filesystem-options)
+`info.json` metadata is expected as created by youtube-dl when using `--write-info-json` [link](https://github.com/ytdl-org/youtube-dl?tab=readme-ov-file#filesystem-options)
 
-movies and series are expected as created by [media companion](https://sourceforge.net/projects/mediacompanion/)
+`nfo` are expected as created by [media companion](https://sourceforge.net/projects/mediacompanion/)
 
-Required:
+### Thumbnail images
 
-- `.nfo` file for movie, series, episode
+The following external images are supported:
 
-Optional:
+- `<moviename/episode>-poster.jpg`
+- `<moviename/episode>-thumb.jpg`
+- `poster.jpg` (collections/series)
+- `season<NO>-poster.jpg` (season)
 
-- `<moviename>-poster.jpg` (movie), `poster.jpg` (series), `season<NO>-poster.jpg` (season), `<episode-file-name>.nfo` (episode)
-
-For the **music** section I recommend using [MP3Tag](https://www.mp3tag.de/) to fill 'title' and 'artists'. It is really great for going through multiple files at the same time. But this tool does not offer an easy way to add tags or give the option to add multiple artists. For those cases check out this app itself or the notebooks under `useful_notebooks`.
+For files without external metadata I recommend using [MP3Tag](https://www.mp3tag.de/) to fill 'title' and 'artists'. It is really great for going through multiple files at the same time. But this tool does not offer an easy way to add tags or give the option to add multiple artists. For those cases check out this app itself or the notebooks under `useful_notebooks`.
 
 ### Suggestion Algorithm
 
-The app works for movie, shortfilm and series with a scoring system to suggest media. The `algorithm` takes into account:
+The app works for category pages with a scoring system to suggest media. The `algorithm` takes into account:
 
 - recency of last watching
 - personal scoring
