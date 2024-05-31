@@ -44,7 +44,7 @@ def build_xml_playlist(items:list[Playable | Collection], target_location=None):
   for item in items:
     track = ET.SubElement(tracklist, "track")
     location = ET.SubElement(track, "location")
-    location.text = str(item.file_path)
+    location.text = str(Path(item.file_path))
     if item.start_time_ms or item.end_time_ms:
       # Implemented based on: https://wiki.videolan.org/XSPF/#Example_of_XSPF_with_VLC_extensions 
       extension = ET.SubElement(track, 'extension', application='http://www.videolan.org/vlc/playlist/0')
