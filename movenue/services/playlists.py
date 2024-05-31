@@ -18,6 +18,33 @@ def default_playlist_location():
   tmp_folder = tempfile.gettempdir()
   return os.path.join(tmp_folder, "playlist.xspf")
 
+def default_m3u_playlist_location():
+  """
+  Get the default location for the M3U playlist file.
+
+  Returns:
+    str: Default location for the M3U playlist file.
+  """
+  # Get the tmp folder assigned to the application
+  tmp_folder = tempfile.gettempdir()
+  return os.path.join(tmp_folder, "playlist.m3u")
+
+def build_playlist(items:list[Playable | Collection], target_location=None):
+  if target_location is None:
+    target_location = default_playlist_location()
+  if target_location.endswith(".xspf"):
+    build_xml_playlist(items, target_location)
+  if target_location.endswith(".m3u"):
+    build_m3u_playlist(items, target_location)
+
+def build_m3u_playlist(items:list[Playable | Collection], target_location=None):
+  if target_location is None:
+    target_location = default_m3u_playlist_location()
+  with open(target_location, "w") as file:
+    file.write("#EXTM3U\n")
+    for item in items:
+      file.write(f"{str(os.path.abspath(item.file_path))}\n")
+
 def build_xml_playlist(items:list[Playable | Collection], target_location=None):
   """
   Build an XML playlist file.

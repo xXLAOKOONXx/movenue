@@ -79,14 +79,14 @@ class FilterPage(tk.Frame):
         os.startfile(playlists.default_playlist_location())
     
     def save_playlist(self):
-        target_location = filedialog.asksaveasfilename(defaultextension='.xspf', filetypes=[('XSPF files', '*.xspf')])
+        target_location = filedialog.asksaveasfilename(defaultextension='.xspf', filetypes=[('XSPF files', '*.xspf'), ('m3u files', '*.m3u')])
         if not target_location:
           return
         filtered_items = self.get_filtered_items()
         if self.weight_playlist_active.get():
             filtered_items = playlists.weight_playlist_items(filtered_items)
 
-        playlists.build_xml_playlist(filtered_items, target_location=target_location)
+        playlists.build_playlist(filtered_items, target_location=target_location)
 
     def update_poster_wall(self):
         for slave in self.result_frame.pack_slaves():
