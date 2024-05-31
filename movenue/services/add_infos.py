@@ -42,28 +42,28 @@ def save_playable_to_id3(playable: Playable) -> None:
   try:
     id3 = ID3(playable.file_path)
 
-    tf = TextFrame(text=playable.tags)
+    tf = TextFrame(text=','.join(playable.tags))
     id3.setall(id3_fields.TAGS, [tf])
 
     if playable.lastplayed is not None:
       tf = TextFrame(text=str(playable.lastplayed))
-      id3.setall(id3_fields.LASTPLAYED, tf)
+      id3.setall(id3_fields.LASTPLAYED, [tf])
 
     if playable.user_rating is not None:
       tf = TextFrame(text=str(playable.user_rating))
-      id3.setall(id3_fields.USERRATING, tf)
+      id3.setall(id3_fields.USERRATING, [tf])
     
     if playable.playcount is not None:
       tf = TextFrame(text=str(playable.playcount))
-      id3.setall(id3_fields.PLAYCOUNT, tf)
+      id3.setall(id3_fields.PLAYCOUNT, [tf])
 
     if playable.start_time_ms is not None:
       tf = TextFrame(text=str(playable.start_time_ms))
-      id3.setall(id3_fields.START_TIME_IN_MS, tf)
+      id3.setall(id3_fields.START_TIME_IN_MS, [tf])
 
     if playable.end_time_ms is not None:
       tf = TextFrame(text=str(playable.end_time_ms))
-      id3.setall(id3_fields.END_TIME_IN_MS, tf)
+      id3.setall(id3_fields.END_TIME_IN_MS, [tf])
 
     id3.save()
   except Exception as e:

@@ -140,7 +140,7 @@ def add_mp4_playable_info(playable: Playable) -> None:
 def add_id3_playable_info(playable: Playable) -> None:
     id3 = ID3(playable.file_path)
     if tags := id3.get(id3_fields.TAGS):
-      playable.tags = tags.text
+      playable.tags = tags.text.split(',')
 
     if music_start := id3.get(id3_fields.START_TIME_IN_MS):
       playable.start_time_ms = int(music_start.text[0])
