@@ -35,7 +35,7 @@ Create `.vscode/launch.json` with below content
       "name": "Debug App",
       "type": "debugpy",
       "request": "launch",
-      "program": "movenue/app.py",
+      "program": "movenue/ui/app.py",
       "console": "integratedTerminal"
     }
   ]
