@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 from movenue.constants import nfo_fields, mp4_fields, id3_fields
 from mutagen.mp4 import MP4
 from movenue.models.storage import FolderStorage, Storage
-from mutagen.id3 import ID3, TextFrame
+from mutagen.id3 import ID3, TextFrame, TXXX
 
 
 def save_playable_to_file(playable: Playable, store:Storage|None=None) -> None:
@@ -42,28 +42,35 @@ def save_playable_to_id3(playable: Playable) -> None:
   try:
     id3 = ID3(playable.file_path)
 
-    tf = TextFrame(text=','.join(playable.tags))
-    id3.setall(id3_fields.TAGS, [tf])
+    if playable.tags:
+      tf = TextFrame(text=playable.tags)
+      tx = TXXX(desc=id3_fields.TAGS, text=[tf])
+      id3.add(tx)
 
     if playable.lastplayed is not None:
       tf = TextFrame(text=str(playable.lastplayed))
-      id3.setall(id3_fields.LASTPLAYED, [tf])
+      tx = TXXX(desc=id3_fields.LASTPLAYED, text=[tf])
+      id3.add(tx)
 
     if playable.user_rating is not None:
       tf = TextFrame(text=str(playable.user_rating))
-      id3.setall(id3_fields.USERRATING, [tf])
+      tx = TXXX(desc=id3_fields.USERRATING, text=[tf])
+      id3.add(tx)
     
     if playable.playcount is not None:
       tf = TextFrame(text=str(playable.playcount))
-      id3.setall(id3_fields.PLAYCOUNT, [tf])
+      tx = TXXX(desc=id3_fields.PLAYCOUNT, text=[tf])
+      id3.add(tx)
 
     if playable.start_time_ms is not None:
       tf = TextFrame(text=str(playable.start_time_ms))
-      id3.setall(id3_fields.START_TIME_IN_MS, [tf])
+      tx = TXXX(desc=id3_fields.START_TIME_IN_MS, text=[tf])
+      id3.add(tx)
 
     if playable.end_time_ms is not None:
       tf = TextFrame(text=str(playable.end_time_ms))
-      id3.setall(id3_fields.END_TIME_IN_MS, [tf])
+      tx = TXXX(desc=id3_fields.END_TIME_IN_MS, text=[tf])
+      id3.add(tx)
 
     id3.save()
   except Exception as e:

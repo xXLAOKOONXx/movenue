@@ -139,13 +139,13 @@ def add_mp4_playable_info(playable: Playable) -> None:
 
 def add_id3_playable_info(playable: Playable) -> None:
     id3 = ID3(playable.file_path)
-    if tags := id3.get(id3_fields.TAGS):
-      playable.tags = tags.text.split(',')
+    if tags := id3.get('TXXX:' + id3_fields.TAGS):
+      playable.tags = tags.text
 
-    if music_start := id3.get(id3_fields.START_TIME_IN_MS):
+    if music_start := id3.get('TXXX:' + id3_fields.START_TIME_IN_MS):
       playable.start_time_ms = int(music_start.text[0])
 
-    if music_end := id3.get(id3_fields.END_TIME_IN_MS):
+    if music_end := id3.get('TXXX:' + id3_fields.END_TIME_IN_MS):
       playable.end_time_ms = int(music_end.text[0])
 
     if title := id3.get('TIT2'):
@@ -159,7 +159,7 @@ def add_id3_playable_info(playable: Playable) -> None:
       # POPM:Windows Media Player 9 Series decodes in 2^STAR
       playable.user_rating = (int(math.log2(wmp_rating)) - 4) * 2
 
-    if user_rating := id3.get(id3_fields.USERRATING):
+    if user_rating := id3.get('TXXX:' + id3_fields.USERRATING):
       playable.user_rating = int(user_rating.text[0])
 
     if "APIC:" in id3:
