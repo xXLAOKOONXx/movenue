@@ -11,29 +11,29 @@ from movenue.models.storage import FolderStorage, Storage
 from mutagen.id3 import ID3, TextFrame
 
 
-def save_playable_to_file(playable: Playable, filestore:FolderStorage|None=None) -> None:
+def save_playable_to_file(playable: Playable, store:Storage|None=None) -> None:
   nfo_path = f'''{'.'.join(str(playable.file_path).split('.')[0:-1])}.nfo'''
   if os.path.exists(nfo_path):
     try:
       save_playable_to_nfo(playable, nfo_path)
-      if filestore:
-        Storage.save_folder_storage(filestore)
+      if store:
+        store.recache(playable)
       return
     except Exception as e:
       logger.error(f"Error saving infos to {nfo_path}: {e}")
   if str(playable.file_path).endswith('.mp4'):
     try:
       save_playable_to_mp4(playable)
-      if filestore:
-        Storage.save_folder_storage(filestore)
+      if store:
+        store.recache(playable)
       return
     except Exception as e:
       logger.error(f"Error saving infos to {playable.file_path}: {e}")
   if str(playable.file_path).endswith('.mp3'):
     try:
       save_playable_to_id3(playable)
-      if filestore:
-        Storage.save_folder_storage(filestore)
+      if store:
+        store.recache(playable)
       return
     except Exception as e:
       logger.error(f"Error saving infos to {playable.file_path}: {e}")
@@ -145,11 +145,13 @@ def save_playable_to_mp4(playable: Playable) -> None:
   except Exception as e:
     raise Exception(f'Error saving MP4 metadata: {e}')
   
-def save_collection_to_file(collection: Collection) -> None:
+def save_collection_to_file(collection: Collection, storage:Storage|None) -> None:
   nfo_path = os.path.join(collection.full_path, f'tvshow.nfo')
   if os.path.exists(nfo_path):
     try:
       save_collection_to_nfo(collection, nfo_path)
+      if storage:
+        storage.recache(collection)
     except Exception as e:
       logger.error(f"Error saving {nfo_path}: {e}")
 

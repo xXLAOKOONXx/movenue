@@ -83,6 +83,45 @@ class Storage:
     for folder_storage in self.categories[category]:
       Storage.refresh_folder_store(folder_storage)
 
+  def save(self):
+    for folder_storage in self._all_storages.values():
+      Storage.save_folder_storage(folder_storage)
+
+  def recache(self, item: Playable|Collection):
+    def playable_in_collection(playable: Playable, collection: Collection):
+      if not collection.collectables:
+        return False
+      if isinstance(collection.collectables[0], Playable):
+        if playable in collection.collectables:
+          return True
+      if isinstance(collection.collectables[0], Collection):
+        for sub_collection in collection.collectables:
+          if playable_in_collection(playable, sub_collection):
+            return True
+      return False
+    
+    def collection_in_collection(collection: Collection, parent_collection: Collection):
+      if not parent_collection.collectables:
+        return False
+      if collection in parent_collection.collectables:
+        return True
+      for sub_collection in parent_collection.collectables:
+        if collection_in_collection(collection, sub_collection):
+          return True
+      return False
+
+    if isinstance(item, Playable):
+      for folder_storage in self._all_storages.values():
+        if item in folder_storage.playables or any([playable_in_collection(item, collection) for collection in folder_storage.collections]):
+          add_playable_info(item)
+          Storage.save_folder_storage(folder_storage)
+
+    if isinstance(item, Collection):
+      for folder_storage in self._all_storages.values():
+        if item in folder_storage.collections or any([collection_in_collection(item, collection) for collection in folder_storage.collections]):
+          add_collection_info(item)
+          Storage.save_folder_storage(folder_storage)
+
   @staticmethod
   def refresh_folder_store(folder_storage: FolderStorage):
     folder_storage.playables = []

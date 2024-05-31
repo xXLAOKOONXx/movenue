@@ -2,6 +2,7 @@ from typing import Callable, Tuple
 from PIL import Image, ImageTk
 import tkinter as tk
 from movenue.models.collection import Collection
+from movenue.models.storage import Storage
 from movenue.ui.elements.popup_window import PopupWindow
 from movenue.ui.elements.posters.collection_popup import collection_popup
 from movenue.ui.elements.posters.playable_popup import playable_popup
@@ -13,19 +14,19 @@ from loguru import logger
 
 from movenue.models.playable import Playable
 
-def build_poster(displayable:Playable | Collection, popup_master: tk.Widget, show_title: bool = True, show_played:bool = True, default_width:int=100) -> Callable[[tk.Widget, int], Tuple[tk.Widget, int]]:
+def build_poster(displayable:Playable | Collection, popup_master: tk.Widget, show_title: bool = True, show_played:bool = True, default_width:int=100, storage:Storage|None=None) -> Callable[[tk.Widget, int], Tuple[tk.Widget, int]]:
   if isinstance(displayable, Playable):
-    return playable_poster_lambda(displayable, popup_master, show_title, show_played, default_width)
+    return playable_poster_lambda(displayable, popup_master, show_title, show_played, default_width, storage=storage)
   if isinstance(displayable, Collection):
-    return collection_poster_lambda(displayable, popup_master, show_title, show_played, default_width)
+    return collection_poster_lambda(displayable, popup_master, show_title, show_played, default_width, storage=storage)
 
-def playable_poster_lambda(playable: Playable, popup_master: tk.Widget, show_title: bool = True, show_played:bool = True, default_width:int=100, include_index_number:bool = True, parent_collection:Collection|None=None) -> Callable[[tk.Widget, int], Tuple[tk.Widget, int]]:
+def playable_poster_lambda(playable: Playable, popup_master: tk.Widget, show_title: bool = True, show_played:bool = True, default_width:int=100, include_index_number:bool = True, parent_collection:Collection|None=None, storage:Storage|None=None) -> Callable[[tk.Widget, int], Tuple[tk.Widget, int]]:
   """
   Returns a lambda function that creates a playable poster and returns the poster and its width.
   """
   def lambda_function(master: tk.Widget, height: int) -> Tuple[tk.Widget, int]:
     def open_popup():
-      popup = PopupWindow(popup_master, playable_popup(playable, collection=parent_collection))
+      popup = PopupWindow(popup_master, playable_popup(playable, collection=parent_collection, storage=storage))
       popup.activate()
     pretty_name = ''
     if show_title:
@@ -60,13 +61,13 @@ def playable_poster_lambda(playable: Playable, popup_master: tk.Widget, show_tit
 
   return lambda_function
 
-def collection_poster_lambda(collection: Collection, popup_master: tk.Widget, show_title: bool = True, show_played:bool = True, default_width:int=100, on_click:Callable | None=None) -> Callable[[tk.Widget, int], Tuple[tk.Widget, int]]:
+def collection_poster_lambda(collection: Collection, popup_master: tk.Widget, show_title: bool = True, show_played:bool = True, default_width:int=100, on_click:Callable | None=None, storage:Storage|None=None) -> Callable[[tk.Widget, int], Tuple[tk.Widget, int]]:
   """
   Returns a lambda function that creates a playable poster and returns the poster and its width.
   """
   def lambda_function(master: tk.Widget, height: int) -> Tuple[tk.Widget, int]:
     def open_popup():
-      popup = PopupWindow(popup_master, collection_popup(collection))
+      popup = PopupWindow(popup_master, collection_popup(collection, storage=storage))
       popup.activate()
     nonlocal on_click
     if not on_click:

@@ -49,19 +49,19 @@ class CategoryPage(Frame):
     rows = []
     if self._add_recent_category:
       items.sort(key=lambda p: p.lastplayed or date(year=1900,month=1,day=1), reverse=True)
-      rows.append(lambda master: HeadedScrollRow([build_poster(p, self, False) for p in items[:10]], 
+      rows.append(lambda master: HeadedScrollRow([build_poster(p, self, False, storage=self._store) for p in items[:10]], 
                                                  self.winfo_screenwidth(), master=master, title='Recently Played'))
       
     if self._add_random_category:
       random.seed(date.today().isoformat())
-      rows.append(lambda master: HeadedScrollRow([build_poster(p, self, False) for p in random.sample(items, 50)], 
+      rows.append(lambda master: HeadedScrollRow([build_poster(p, self, False, storage=self._store) for p in random.sample(items, 50)], 
                                                  self.winfo_screenwidth(), master=master, title='Random Selection'))
       random.seed()
 
 
     additional_rows = [lambda master, category=category: HeadedScrollRow(
-              [playable_poster_lambda(p, self, False) for p in playables if category in p.tags] + 
-              [collection_poster_lambda(p, self, False) for p in collections if category in p.tags], 
+              [playable_poster_lambda(p, self, False, storage=self._store) for p in playables if category in p.tags] + 
+              [collection_poster_lambda(p, self, False, storage=self._store) for p in collections if category in p.tags], 
               self.winfo_screenwidth(), 
               master=master,
               title=category,) 

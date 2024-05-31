@@ -5,11 +5,12 @@ from typing import Callable
 
 from movenue.models.collection import Collection
 from movenue.models.playable import Playable
-from movenue.models.storage import FolderStorage
+from movenue.models.storage import Storage
 from movenue.services import add_infos
+from movenue.services.play import play_playable
 
 
-def playable_popup(playable: Playable, collection: Collection |None=None, folder_storage:FolderStorage|None=None) -> Callable[[tk.Widget], tk.Widget]:
+def playable_popup(playable: Playable, collection: Collection |None=None, storage:Storage|None=None) -> Callable[[tk.Widget], tk.Widget]:
     def popup_content(master: tk.Widget, **kwargs) -> tk.Widget:
         content = tk.Frame(master)
 
@@ -81,18 +82,13 @@ def playable_popup(playable: Playable, collection: Collection |None=None, folder
               playable.user_rating = int(user_rating.get())
             if music_end_var.get():
               playable.end_time_ms = int(music_end_var.get())
-            add_infos.save_playable_to_file(playable, folder_storage)
+            add_infos.save_playable_to_file(playable, storage)
 
         save_button = ttk.Button(content, text='Save', command=save)
         save_button.pack()
 
         def play_file():
-          playable.add_play_now_infos()
-          if collection:
-            collection.add_play_now_infos()
-            add_infos.save_collection_to_file(collection)
-          add_infos.save_playable_to_file(playable, folder_storage)
-          os.startfile(os.path.abspath(playable.file_path))
+            play_playable(playable, storage, collection)
 
         play_frame = tk.Frame(content)
         play_frame.pack()

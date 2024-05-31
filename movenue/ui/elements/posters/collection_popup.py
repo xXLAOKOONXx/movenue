@@ -6,20 +6,23 @@ from typing import Callable
 from loguru import logger
 from movenue.models.collection import Collection
 from movenue.models.playable import Playable
+from movenue.models.storage import Storage
 from movenue.ui.elements.popup_window import PopupWindow
 from movenue.ui.constants import ui_colors
 from movenue.services.collections_population import add_collection_info
 from movenue.ui.elements.row import ScrollRow
 from movenue.ui.elements import poster
 import random
+from movenue.services.play import play_playable
 
 class CollectionPopup(tk.Frame):
-    def __init__(self, master: tk.Widget, collection: Collection, width:int|None =None, height:int|None =None):
+    def __init__(self, master: tk.Widget, collection: Collection, width:int|None =None, height:int|None =None, storage:Storage|None=None):
         super().__init__(master)
         self.collection = collection
         self.current_season:Collection | None = None
         self.width = width
         self.height = height
+        self.storage = storage
     @staticmethod
     def get_collection_playables(collection: Collection):
         playables:list[Playable] = []
@@ -40,19 +43,19 @@ class CollectionPopup(tk.Frame):
         
     def start_random(self):
         random_selector = random.sample(self.get_all_playables(),1)[0]
-        os.startfile(random_selector.file_path)
+        play_playable(random_selector, self.storage)
 
     def start_random_unseen(self):
         playbles = self.get_all_playables()
         unseen_playables = [p for p in playbles if p.playcount == 0 or p.playcount is None]
         random_selector = random.sample(unseen_playables,1)[0]
-        os.startfile(random_selector.file_path)
+        play_playable(random_selector, self.storage)
     
     def start_random_from_season(self):
         if not self.current_season:
             return
         random_selector = random.sample(self.get_collection_playables(self.current_season),1)[0]
-        os.startfile(random_selector.file_path)
+        play_playable(random_selector, self.storage)
 
     def build_up(self):
         if not self.collection.collectables:
@@ -127,7 +130,7 @@ class CollectionPopup(tk.Frame):
 
 
 
-def collection_popup(collection: Collection) -> Callable[[tk.Widget], tk.Widget]:
+def collection_popup(collection: Collection, storage:Storage|None=None) -> Callable[[tk.Widget], tk.Widget]:
     def popup_content(master: tk.Widget, width=None, **kwargs) -> tk.Widget:
-        return CollectionPopup(master, collection, width=width, **kwargs)
+        return CollectionPopup(master, collection, width=width, storage=storage, **kwargs)
     return popup_content
