@@ -99,7 +99,7 @@ class FilterPage(tk.Frame):
         collections = self.store.get_collections(self.page_name)
         
         items = playables + collections
-        filtered_items = [item for item in items if all([item_filter.passes_filter(item) for item_filter in self.item_filters])]
+        filtered_items = [item for item in items if not self.item_filters or any([item_filter.passes_filter(item) for item_filter in self.item_filters])]
         return filtered_items
 
     def get_poster_lambdas(self):
