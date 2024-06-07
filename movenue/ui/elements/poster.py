@@ -97,10 +97,10 @@ def collection_poster_lambda(collection: Collection, popup_master: tk.Widget, sh
 
     if collection.collectables and all([p.playcount for p in collection.collectables]):
       canvas_helpers.add_seen_tag(poster, calc_width, validation=True, size=30)
-    elif collection.lastplayed or (collection.collectables and any([p.playcount for p in collection.collectables])):
-      canvas_helpers.add_started_tag(poster, calc_width, validation=True, size=30)
     elif collection.collectables and isinstance(collection.collectables[0], Collection) and all([all([p.playcount for p in c.collectables]) for c in collection.collectables]):
       canvas_helpers.add_seen_tag(poster, calc_width, validation=True, size=30)
+    elif collection.lastplayed or (collection.collectables and any([p.playcount for p in collection.collectables])):
+      canvas_helpers.add_started_tag(poster, calc_width, validation=True, size=30)
 
     return poster, calc_width
 
