@@ -94,6 +94,13 @@ def collection_poster_lambda(collection: Collection, popup_master: tk.Widget, sh
         on_click_func=lambda ev: on_click(),
         bottom_text=pretty_name,
     )
+
+    if collection.lastplayed:
+      if collection.collectables and all([p.playcount for p in collection.collectables]):
+        canvas_helpers.add_seen_tag(poster, calc_width, validation=True, size=30)
+      else:
+        canvas_helpers.add_seen_tag(poster, calc_width, validation=True, size=30)
+
     return poster, calc_width
 
   return lambda_function
