@@ -8,6 +8,7 @@ from movenue.ui.elements.posters.collection_popup import collection_popup
 from movenue.ui.elements.posters.playable_popup import playable_popup
 from movenue.ui.services import canvas_helpers
 from movenue.services import image_builder
+from movenue.services.collections_population import add_collection_info
 import math
 
 from loguru import logger
@@ -94,6 +95,9 @@ def collection_poster_lambda(collection: Collection, popup_master: tk.Widget, sh
         on_click_func=lambda ev: on_click(),
         bottom_text=pretty_name,
     )
+
+    if collection.lastplayed and not collection.collectables:
+      add_collection_info(collection)
 
     if collection.collectables and all([p.playcount for p in collection.collectables]):
       canvas_helpers.add_seen_tag(poster, calc_width, validation=True, size=30)
