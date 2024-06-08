@@ -99,11 +99,14 @@ def add_nfo_collection_info(collection:Collection, nfo_path: str | Path, draw_co
                 season_poster_path = None
             season_full_path = os.path.join(collection.full_path, f'S{season_no:02}')
             episode_paths = [os.path.join(collection.full_path, f'S{season_no:02}', name) for name in os.listdir(season_full_path) if name.endswith('.mp4')]
-            episodes = []
+            episodes:list[Playable] = []
             for episode_path in episode_paths:
                 playable = Playable(file_path=episode_path)
                 add_playable_info(playable)
                 episodes.append(playable)
+
+            if any([playable.index_number for playable in episodes]):
+                episodes.sort(key=lambda x: x.index_number or 999)
             
             season = Collection(
                 full_path=season_full_path,
@@ -126,6 +129,19 @@ def add_just_folders_collection_info(collection: Collection, draw_collectbles:bo
     Assumes no meta infos are present.
     """
     collection.title = os.path.basename(collection.full_path)
+
+    if os.path.exists(os.path.join(collection.full_path, 'poster.jpg')):
+        collection.poster_location = os.path.join(collection.full_path, 'poster.jpg')
+    else:    
+        try:
+            playable = Playable(os.path.join(collection.full_path, [file for file in os.listdir(collection.full_path) if file.endswith(tuple(general_settings.SUPPORTED_FILE_ENDINGS))][0]))
+            add_playable_info(playable)
+            if playable.poster_location:
+                collection.poster_location = playable.poster_location
+        except Exception as e:
+            logger.error(f"Error getting poster from first collection item: {e}")
+            pass
+
     if not draw_collectbles:
         return
     playables = []
@@ -152,3 +168,7 @@ def add_just_folders_collection_info(collection: Collection, draw_collectbles:bo
         collection.collectables.append(folder_collection)
     else:
         collection.collectables = playables
+        if any([playable.index_number for playable in collection.collectables]):
+            collection.collectables.sort(key=lambda x: x.index_number)
+        else:
+            collection.collectables.sort(key=lambda x: x.premiere_date)

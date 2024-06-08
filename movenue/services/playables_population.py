@@ -110,6 +110,11 @@ def add_nfo_playable_info(playable: Playable, nfo_path: str | Path) -> None:
     playable.artists = actor_names
   except:
     pass
+  try:
+    y, m, d = xml_root.find('premiered').text.split('-')
+    playable.premiere_date = date(int(y),int(m),int(d))
+  except:
+    pass
 
 def add_mp4_playable_info(playable: Playable) -> None:
   mp4 = MP4(playable.file_path)

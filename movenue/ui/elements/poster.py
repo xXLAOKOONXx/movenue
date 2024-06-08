@@ -14,13 +14,13 @@ from loguru import logger
 
 from movenue.models.playable import Playable
 
-def build_poster(displayable:Playable | Collection, popup_master: tk.Widget, show_title: bool = True, show_played:bool = True, default_width:int=100, storage:Storage|None=None) -> Callable[[tk.Widget, int], Tuple[tk.Widget, int]]:
+def build_poster(displayable:Playable | Collection, popup_master: tk.Widget, show_title: bool = False, show_played:bool = True, default_width:int=100, storage:Storage|None=None) -> Callable[[tk.Widget, int], Tuple[tk.Widget, int]]:
   if isinstance(displayable, Playable):
     return playable_poster_lambda(displayable, popup_master, show_title, show_played, default_width, storage=storage)
   if isinstance(displayable, Collection):
     return collection_poster_lambda(displayable, popup_master, show_title, show_played, default_width, storage=storage)
 
-def playable_poster_lambda(playable: Playable, popup_master: tk.Widget, show_title: bool = True, show_played:bool = True, default_width:int=100, include_index_number:bool = True, parent_collection:Collection|None=None, storage:Storage|None=None) -> Callable[[tk.Widget, int], Tuple[tk.Widget, int]]:
+def playable_poster_lambda(playable: Playable, popup_master: tk.Widget, show_title: bool = False, show_played:bool = True, default_width:int=100, include_index_number:bool = True, parent_collection:Collection|None=None, storage:Storage|None=None) -> Callable[[tk.Widget, int], Tuple[tk.Widget, int]]:
   """
   Returns a lambda function that creates a playable poster and returns the poster and its width.
   """
@@ -61,7 +61,7 @@ def playable_poster_lambda(playable: Playable, popup_master: tk.Widget, show_tit
 
   return lambda_function
 
-def collection_poster_lambda(collection: Collection, popup_master: tk.Widget, show_title: bool = True, show_played:bool = True, default_width:int=100, on_click:Callable | None=None, storage:Storage|None=None) -> Callable[[tk.Widget, int], Tuple[tk.Widget, int]]:
+def collection_poster_lambda(collection: Collection, popup_master: tk.Widget, show_title: bool = False, show_played:bool = True, default_width:int=100, on_click:Callable | None=None, storage:Storage|None=None) -> Callable[[tk.Widget, int], Tuple[tk.Widget, int]]:
   """
   Returns a lambda function that creates a playable poster and returns the poster and its width.
   """
@@ -74,6 +74,8 @@ def collection_poster_lambda(collection: Collection, popup_master: tk.Widget, sh
       on_click = open_popup
 
     pretty_name = collection.title
+    if not show_title:
+      pretty_name = ''
     calc_width = default_width
     img = None
     image_builder.populate_collection_image(collection)
@@ -98,12 +100,13 @@ def collection_poster_lambda(collection: Collection, popup_master: tk.Widget, sh
     if collection.lastplayed and not collection.collectables:
       storage.recache(collection)
 
-    if collection.collectables and all([p.playcount for p in collection.collectables]):
-      canvas_helpers.add_seen_tag(poster, calc_width, validation=True, size=30)
-    elif collection.collectables and isinstance(collection.collectables[0], Collection) and all([all([p.playcount for p in c.collectables]) for c in collection.collectables]):
-      canvas_helpers.add_seen_tag(poster, calc_width, validation=True, size=30)
-    elif collection.lastplayed or (collection.collectables and any([p.playcount for p in collection.collectables])):
-      canvas_helpers.add_started_tag(poster, calc_width, validation=True, size=30)
+    if show_played:
+      if collection.collectables and all([p.playcount for p in collection.collectables]):
+        canvas_helpers.add_seen_tag(poster, calc_width, validation=True, size=30)
+      elif collection.collectables and isinstance(collection.collectables[0], Collection) and all([all([p.playcount for p in c.collectables]) for c in collection.collectables]):
+        canvas_helpers.add_seen_tag(poster, calc_width, validation=True, size=30)
+      elif collection.lastplayed or (collection.collectables and any([p.playcount for p in collection.collectables])):
+        canvas_helpers.add_started_tag(poster, calc_width, validation=True, size=30)
 
     return poster, calc_width
 

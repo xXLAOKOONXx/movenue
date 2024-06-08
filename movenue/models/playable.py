@@ -101,6 +101,11 @@ class Playable:
   The duration of the playable item in milliseconds excluding any cuts.
   """
 
+  premiere_date: date | None = None
+  """
+  The premiere date of the playable item.
+  """
+
   def add_play_now_infos(self) -> None:
     """
     Add information for the current play session.
@@ -130,7 +135,8 @@ class Playable:
       'artists': self.artists,
       'start_time_ms': self.start_time_ms,
       'end_time_ms': self.end_time_ms,
-      'play_duration_ms': self.play_duration_ms
+      'play_duration_ms': self.play_duration_ms,
+      'premiere_date': self.premiere_date.isoformat() if self.premiere_date else None
     }
   
   @staticmethod
@@ -154,5 +160,6 @@ class Playable:
       artists=json_data['artists'],
       start_time_ms=json_data['start_time_ms'],
       end_time_ms=json_data['end_time_ms'],
-      play_duration_ms=json_data['play_duration_ms']
+      play_duration_ms=json_data['play_duration_ms'],
+      premiere_date=date.fromisoformat(json_data.get('premiere_date')) if json_data.get('premiere_date') else None
     )
