@@ -96,7 +96,7 @@ class CollectionPopup(tk.Frame):
                 for p in popup_episodes_row.pack_slaves():
                     p.pack_forget()
 
-                episode_poster_lambdas = [poster.playable_poster_lambda(p, self, parent_collection=self.collection) for p in season.collectables]
+                episode_poster_lambdas = [poster.playable_poster_lambda(p, self, parent_collection=self.collection, show_title=True) for p in season.collectables]
                 sr = ScrollRow(episode_poster_lambdas, master=popup_episodes_row, max_width=(self.width or self.master.winfo_screenwidth) - 20, height=200)
                 sr.frame.pack(side='top')
 
