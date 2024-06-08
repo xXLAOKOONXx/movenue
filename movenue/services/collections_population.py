@@ -95,6 +95,8 @@ def add_nfo_collection_info(collection:Collection, nfo_path: str | Path, draw_co
             season_poster_path = get_season_poster_path(season_no)
             if os.path.exists(season_poster_path):
                 season_img = Image.open(season_poster_path)
+            else:
+                season_poster_path = None
             season_full_path = os.path.join(collection.full_path, f'S{season_no:02}')
             episode_paths = [os.path.join(collection.full_path, f'S{season_no:02}', name) for name in os.listdir(season_full_path) if name.endswith('.mp4')]
             episodes = []
@@ -108,6 +110,7 @@ def add_nfo_collection_info(collection:Collection, nfo_path: str | Path, draw_co
                 title=f"Season {season_no}",
                 collectables=episodes,
                 poster_image=season_img,
+                poster_location=season_poster_path
             )
 
             seasons.append(season)

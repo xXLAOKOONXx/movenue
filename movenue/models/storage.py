@@ -105,9 +105,10 @@ class Storage:
         return False
       if collection in parent_collection.collectables:
         return True
-      for sub_collection in parent_collection.collectables:
-        if collection_in_collection(collection, sub_collection):
-          return True
+      if isinstance(parent_collection.collectables[0], Collection):
+        for sub_collection in parent_collection.collectables:
+          if collection_in_collection(collection, sub_collection):
+            return True
       return False
 
     if isinstance(item, Playable):

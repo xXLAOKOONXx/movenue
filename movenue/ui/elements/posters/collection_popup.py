@@ -9,7 +9,6 @@ from movenue.models.playable import Playable
 from movenue.models.storage import Storage
 from movenue.ui.elements.popup_window import PopupWindow
 from movenue.ui.constants import ui_colors
-from movenue.services.collections_population import add_collection_info
 from movenue.ui.elements.row import ScrollRow
 from movenue.ui.elements import poster
 import random
@@ -59,7 +58,7 @@ class CollectionPopup(tk.Frame):
 
     def build_up(self):
         if not self.collection.collectables:
-          add_collection_info(self.collection)
+          self.storage.recache(self.collection)
         if not self.collection.collectables:
             return
 
