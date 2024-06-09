@@ -1,21 +1,63 @@
+import math
 import os
 import tkinter as tk
 from tkinter import ttk
 from typing import Callable
+from PIL import ImageTk
 
 from movenue.models.collection import Collection
 from movenue.models.playable import Playable
 from movenue.models.storage import Storage
 from movenue.services import add_infos
 from movenue.services.play import play_playable
+from movenue.ui.services import canvas_helpers
+from movenue.ui.services.tk_sizes import get_width
 
 
 def playable_popup(playable: Playable, collection: Collection |None=None, storage:Storage|None=None) -> Callable[[tk.Widget], tk.Widget]:
     def popup_content(master: tk.Widget, **kwargs) -> tk.Widget:
         content = tk.Frame(master)
 
-        title = tk.Label(content, text=playable.title)
+        title = tk.Label(content, text=playable.title, font=('TkDefaultFont', 20))
         title.pack()
+
+        if playable.poster_image:
+          height = 200
+          poster_frame = tk.Frame(content)
+          poster_frame.pack()
+          calc_width = math.floor(playable.poster_image.width * height / playable.poster_image.height)
+          img = playable.tkimages.get((calc_width, height))
+          if img is None:
+            i = playable.poster_image.resize((calc_width, height))
+            img = ImageTk.PhotoImage(i)
+            playable.tkimages[(calc_width, height)] = img
+
+          poster = canvas_helpers.create_image_canvas(
+              master=poster_frame,
+              canvas_width=calc_width,
+              canvas_height=height,
+              image=img,
+              image_alt_text='Error displaying Poster',
+              on_click_func=None,
+              bottom_text=None,
+          )
+          poster.pack()
+           
+        if playable.artists:
+          artists = tk.Label(content, text=', '.join(playable.artists[:10]), wraplength=get_width(master) / 2 - 20, justify='left')
+          artists.pack()
+        if playable.playcount:
+          playcount = tk.Label(content, text=f'Played {playable.playcount} times')
+          playcount.pack()
+        if playable.lastplayed:
+          lastplayed = tk.Label(content, text=f'Last played on {playable.lastplayed}')
+          lastplayed.pack()
+        if playable.public_rating:
+          public_rating = tk.Label(content, text=f'Public Rating: {playable.public_rating}')
+          public_rating.pack()
+        if playable.premiere_date:
+          premiere_date = tk.Label(content, text=f'Premiere Date: {playable.premiere_date}')
+          premiere_date.pack()
 
         user_rating_row = tk.Frame(content)
         user_rating_row.pack()
@@ -91,8 +133,8 @@ def playable_popup(playable: Playable, collection: Collection |None=None, storag
             play_playable(playable, storage, collection)
 
         play_frame = tk.Frame(content)
-        play_frame.pack()
-        tk.Button(play_frame, text='Play', command=lambda: play_file()).pack()
+        play_frame.pack(side='bottom', pady=10)
+        ttk.Button(play_frame, text='Play', command=lambda: play_file()).pack()
 
         
         return content
