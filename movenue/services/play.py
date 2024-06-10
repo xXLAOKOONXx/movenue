@@ -10,8 +10,8 @@ def play_playable(playable:Playable, store:Storage, collection:Collection|None=N
   playable.add_play_now_infos()
   if collection:
     collection.add_play_now_infos()
-    add_infos.save_collection_to_file(collection)
-  add_infos.save_playable_to_file(playable)
+    add_infos.save_collection_to_file(collection, storage=store)
+  add_infos.save_playable_to_file(playable, store=store)
   os.startfile(os.path.abspath(playable.file_path))
   if store:
     store.recache(playable)
