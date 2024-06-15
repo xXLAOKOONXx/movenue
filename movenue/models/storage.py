@@ -48,6 +48,7 @@ class Storage:
   categories : dict[str, list[FolderStorage]]
   _all_storages: dict[Tuple[str, str, bool], FolderStorage] = {}
   def __init__(self, category_settings: list[CategorySettings]):
+    self._all_storages = {}
     self.categories = {}
     for category_setting in category_settings:
       self.categories[category_setting.name] = []
