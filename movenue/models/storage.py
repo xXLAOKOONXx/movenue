@@ -16,6 +16,10 @@ CACHE_FOLDER = os.path.join(os.environ['LOCALAPPDATA'], 'movenue', 'cache')
 def get_folder_storage_key(path, search_type, include_subfolders_for_playables) -> Tuple[str, str, bool]:
   return f"{str(path).replace('/','-').replace('\\','-')}_{search_type}_{include_subfolders_for_playables}"
 
+def is_subpath(dir_path, file_path):
+    common_prefix = os.path.commonprefix([dir_path, file_path])
+    return os.path.normpath(common_prefix) == os.path.normpath(dir_path)
+
 @dataclass
 class FolderStorage:
   folder_path : str | Path
@@ -92,8 +96,10 @@ class Storage:
     def playable_in_collection(playable: Playable, collection: Collection):
       if not collection.collectables:
         return False
+      if not is_subpath(collection.full_path, playable.file_path):
+        return False      
       if isinstance(collection.collectables[0], Playable):
-        if playable in collection.collectables:
+        if any([str(playable.file_path) == str(collectable.file_path) for collectable in collection.collectables]):
           return True
       if isinstance(collection.collectables[0], Collection):
         for sub_collection in collection.collectables:
@@ -104,9 +110,11 @@ class Storage:
     def collection_in_collection(collection: Collection, parent_collection: Collection):
       if not parent_collection.collectables:
         return False
-      if collection in parent_collection.collectables:
-        return True
+      if not is_subpath(parent_collection.full_path, collection.full_path):
+        return False  
       if isinstance(parent_collection.collectables[0], Collection):
+        if any([str(collection.full_path) == str(collectable.full_path) for collectable in parent_collection.collectables]):
+          return True
         for sub_collection in parent_collection.collectables:
           if collection_in_collection(collection, sub_collection):
             return True
