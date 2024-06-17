@@ -14,7 +14,7 @@ from movenue.services.collections_population import add_collection_info
 CACHE_FOLDER = os.path.join(os.environ['LOCALAPPDATA'], 'movenue', 'cache')
 
 def get_folder_storage_key(path, search_type, include_subfolders_for_playables) -> Tuple[str, str, bool]:
-  return f"{str(path).replace('/','-').replace('\\','-')}_{search_type}_{include_subfolders_for_playables}"
+  return f"{str(path).replace('/','-').replace('\\','-').replace(':','-dp-')}_{search_type}_{include_subfolders_for_playables}"
 
 def is_subpath(dir_path, file_path):
     common_prefix = os.path.commonprefix([dir_path, file_path])
