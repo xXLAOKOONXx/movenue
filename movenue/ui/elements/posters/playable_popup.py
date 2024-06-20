@@ -16,7 +16,26 @@ from movenue.ui.services.tk_sizes import get_width
 
 def playable_popup(playable: Playable, collection: Collection |None=None, storage:Storage|None=None) -> Callable[[tk.Widget], tk.Widget]:
     def popup_content(master: tk.Widget, **kwargs) -> tk.Widget:
-        content = tk.Frame(master)
+        outer_frame = tk.Frame(master)
+        wrapper_frame = tk.Frame(outer_frame)
+        wrapper_frame.pack(side='top', fill='both', expand=True)
+        scrollable_canvas = tk.Canvas(wrapper_frame)
+        scrollbar = ttk.Scrollbar(wrapper_frame, orient='vertical')
+        scrollbar.pack(side='right', fill='y')
+        scrollable_canvas.pack(side='right', fill='both', expand=True)
+        content = tk.Frame(scrollable_canvas)
+        frame_id = scrollable_canvas.create_window((0, 0), window=content, anchor='n',)
+        scrollable_canvas.configure(yscrollcommand=scrollbar.set)
+        scrollbar.configure(command=scrollable_canvas.yview)
+        def set_up_scrollable_canvas(event, scrollable_canvas:tk.Canvas, frame_id, content):
+          scrollable_canvas.configure(scrollregion=scrollable_canvas.bbox('all'))
+          x = (event.width - content.winfo_width()) / 2
+          scrollable_canvas.coords(frame_id, (x, 0))
+        scrollable_canvas.bind('<Configure>', lambda e, scrollable_canvas=scrollable_canvas, frame_id=frame_id, content=content: set_up_scrollable_canvas(e, scrollable_canvas, frame_id, content))
+        def on_scroll(event):
+          scrollable_canvas.yview_scroll(-1 * int(event.delta / 120), "units")
+        scrollable_canvas.bind_all("<MouseWheel>", on_scroll)
+
 
         title = tk.Label(content, text=playable.title, font=('TkDefaultFont', 20))
         title.pack()
@@ -132,10 +151,10 @@ def playable_popup(playable: Playable, collection: Collection |None=None, storag
         def play_file():
             play_playable(playable, storage, collection)
 
-        play_frame = tk.Frame(content)
+        play_frame = tk.Frame(outer_frame)
         play_frame.pack(side='bottom', pady=10)
         ttk.Button(play_frame, text='Play', command=lambda: play_file()).pack()
 
         
-        return content
+        return outer_frame
     return popup_content
