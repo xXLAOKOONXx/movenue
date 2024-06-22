@@ -4,6 +4,7 @@ from tkinter import ttk
 from movenue.models.collection import Collection
 from movenue.models.playable import Playable
 
+NONE_TAG = 'None'
 
 class ItemFilter:
     def __init__(self):
@@ -19,6 +20,7 @@ class ItemFilter:
     def get_ui_element(self, master: tk.Widget, available_tags: list[str]):
         available_tags = available_tags + ['']
         available_tags = sorted(available_tags)
+        available_tags = [NONE_TAG] + available_tags
         self.frame = tk.Frame(master)
 
         # TAGS
@@ -75,7 +77,7 @@ class ItemFilter:
         tags = item.tags
       if isinstance(item, Collection):
         tags = item.tags
-      if 'None' in filter_vals and not tags:
+      if NONE_TAG in filter_vals and not tags:
         return True
       return all(tag in tags for tag in filter_vals)
     
