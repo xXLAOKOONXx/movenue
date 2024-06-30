@@ -42,19 +42,19 @@ class CollectionPopup(tk.Frame):
         
     def start_random(self):
         random_selector = random.sample(self.get_all_playables(),1)[0]
-        play_playable(random_selector, self.storage)
+        play_playable(random_selector, self.storage, self.collection)
 
     def start_random_unseen(self):
         playbles = self.get_all_playables()
         unseen_playables = [p for p in playbles if p.playcount == 0 or p.playcount is None]
         random_selector = random.sample(unseen_playables,1)[0]
-        play_playable(random_selector, self.storage)
+        play_playable(random_selector, self.storage, self.collection)
     
     def start_random_from_season(self):
         if not self.current_season:
             return
         random_selector = random.sample(self.get_collection_playables(self.current_season),1)[0]
-        play_playable(random_selector, self.storage)
+        play_playable(random_selector, self.storage, self.collection)
 
     def build_up(self):
         if not self.collection.collectables:
