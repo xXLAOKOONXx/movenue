@@ -22,19 +22,6 @@ if __name__ == '__main__':
     settings_path = os.path.join(local_app_data_folder, 'category_settings.json')
     if not os.path.exists(settings_path): 
         cat_settings:list[CategorySettings] = []
-
-        films_settings = CategorySettings('Filme', [FolderSetting('//mynas/Daten/Videos/Filme', 'playables', False)], 'category_page')
-        search_settings = CategorySettings('Suche', [FolderSetting('//mynas/Daten/Videos/Filme', 'playables', False)], 'search_page')
-        series_settings = CategorySettings('Serien', [FolderSetting('//mynas/Daten/Videos/Serien', 'collections', False)], 'category_page')
-        music_settings = CategorySettings('Musik', [FolderSetting('//mynas/Daten/Musik/Videos', 'playables', True)], 'filter_page')
-
-        cat_settings.append(films_settings)
-        cat_settings.append(search_settings)
-        cat_settings.append(series_settings)
-        cat_settings.append(music_settings)
-
-        with open(settings_path, 'w') as f:
-            json.dump([cat.__to_json__() for cat in cat_settings], f)
     
     if os.path.exists(settings_path):
         with open(settings_path, 'r') as f:
