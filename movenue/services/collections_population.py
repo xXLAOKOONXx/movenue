@@ -55,7 +55,10 @@ def add_nfo_collection_info(collection:Collection, nfo_path: str | Path, draw_co
 
     poster_url = os.path.join(collection.full_path, 'poster.jpg')
     if not os.path.exists(poster_url):
-        poster_url = None
+        parent_path = os.path.dirname(collection.full_path)
+        poster_url = os.path.join(parent_path, 'poster.jpg')
+        if not os.path.exists(poster_url):
+            poster_url = None
 
     def get_seasons() -> list[int]:
       seasons = []
@@ -73,7 +76,11 @@ def add_nfo_collection_info(collection:Collection, nfo_path: str | Path, draw_co
             path = os.path.join(collection.full_path, f'season{int(no/100):02}-poster.jpg')
             if os.path.exists(path):
                 return path
-        return os.path.join(collection.full_path, f'season{no:02}-poster.jpg')
+        path = os.path.join(collection.full_path, f'season{no:02}-poster.jpg')
+        if os.path.exists(path):
+            return path
+        path = os.path.join(collection.full_path, 'poster.jpg')
+        return path
     
     collection.title=titles[0]
     collection.alt_titles=titles[1:]

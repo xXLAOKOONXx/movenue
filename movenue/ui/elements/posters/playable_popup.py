@@ -134,6 +134,7 @@ def playable_popup(playable: Playable, collection: Collection |None=None, storag
                 playable.tags.append(tag)
                 current_tags_var.set(', '.join(playable.tags))
                 tag_var.set('')
+        tag_entry.bind('<Return>', lambda e: add_tag())
         ttk.Button(add_tag_frame, text='Add Tag', command=add_tag).pack(side='left')
 
         def save():

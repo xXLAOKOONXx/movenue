@@ -19,6 +19,7 @@ class SearchPage(tk.Frame):
 
         self.search_entry = ttk.Entry(self, textvariable=self.search_var)
         self.search_entry.pack(side='top', fill='x')
+        self.search_entry.bind('<Return>', self.search)
 
         self.search_button = ttk.Button(self, text='Search', command=self.search)
         self.search_button.pack(side='top')
@@ -45,7 +46,7 @@ class SearchPage(tk.Frame):
         filtered_playables = [playable for playable in playables if is_searchable_playable(playable)]
         filtered_collections = [collection for collection in collections if is_searchable_collection(collection)]
         filtered_elements = filtered_playables + filtered_collections
-        return [build_poster(filtered_element, self.popup_master) for filtered_element in filtered_elements]
+        return [build_poster(filtered_element, self.popup_master, storage=self.store) for filtered_element in filtered_elements]
     
     def pack(self, **kwargs):
         self.update_poster_wall()
