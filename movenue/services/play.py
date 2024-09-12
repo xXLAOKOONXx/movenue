@@ -10,10 +10,10 @@ from movenue.services.collections_population import add_collection_info
 
 def play_playable(playable:Playable, store:Storage, collection:Collection|None=None):
   os.startfile(os.path.abspath(playable.file_path))
-  if collection:
-    add_collection_info(collection, draw_collectbles=False)
-    collection.add_play_now_infos()
-    add_infos.save_collection_to_file(collection, storage=store)
   add_playable_info(playable)
   playable.add_play_now_infos()
   add_infos.save_playable_to_file(playable, store=store)
+  if collection:
+    add_collection_info(collection, draw_collectbles=True)
+    collection.add_play_now_infos()
+    add_infos.save_collection_to_file(collection, storage=store)
