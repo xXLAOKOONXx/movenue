@@ -89,7 +89,7 @@ def build_xml_playlist(items:list[Playable | Collection], target_location=None):
   tree.write(target_location, encoding="utf-8", xml_declaration=True)
 
 def linear_weighting(score: int | float | None) -> int:
-  if not score:
+  if score is None:
     return 1
   return int(score)
 
