@@ -49,7 +49,24 @@ class CollectionPopup(tk.Frame):
         unseen_playables = [p for p in playbles if p.playcount == 0 or p.playcount is None]
         random_selector = random.sample(unseen_playables,1)[0]
         play_playable(random_selector, self.storage, self.collection)
-    
+
+    def get_next_unseen(self):
+        if self.current_season and self.current_season.playcount == 0:
+            playables = self.get_collection_playables(self.current_season)
+        else:
+            playables = self.get_all_playables()
+        unseen_playables = [p for p in playables if p.playcount == 0 or p.playcount is None]
+        if unseen_playables:
+            return unseen_playables[0]
+        return None
+
+    def start_next_unseen(self):
+        next_unseen = self.get_next_unseen()
+        if next_unseen:
+            play_playable(next_unseen, self.storage, self.collection)
+        else:
+            logger.warning("No unseen episodes found in collection.")
+
     def start_random_from_season(self):
         if not self.current_season:
             return
@@ -88,6 +105,9 @@ class CollectionPopup(tk.Frame):
         random_eps = tk.Label(master=popup_bottom_row, text='Random unseen Episode', background=ui_colors.DEFAULT_BUTTON, foreground='white')
         random_eps.bind('<Button-1>', lambda ev: self.start_random_unseen())
         random_eps.grid(column=2, row=0, padx=10, pady=10, ipadx=10, ipady=10)
+        next_eps = tk.Label(master=popup_bottom_row, text='Next Episode', background=ui_colors.DEFAULT_BUTTON, foreground='white')
+        next_eps.bind('<Button-1>', lambda ev: self.start_next_unseen())
+        next_eps.grid(column=3, row=0, padx=10, pady=10, ipadx=10, ipady=10)
 
         
         if traditional_series_flag:
